@@ -1,4 +1,12 @@
 {
-  "name": "example",
-  "app_id": ""
+  "name": "Symphonia.io",
+  "app_id": "913719c3",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ]
 }
