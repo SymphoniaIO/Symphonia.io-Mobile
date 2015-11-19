@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<ion-content class="secondary-color-background" scroll="false" ng-controller="OptionsCtrl">
+  <img src="https://www.placehold.it/500x500" width="100%" height="33%" class="options-image"/>
+
+  <div class="list raleway-medium output-format-checkbox">
+    <div>
+      <p class="primary-color">Select output file format</p>
+    </div>
+    <ion-radio ng-repeat="item in outputFormatList"
+               ng-value="item.value"
+               ng-model="data.clientSide">
+      {{ item.text }}
+    </ion-radio>
+  </div>
+
+  <div class="my-buttons-options">
+    <button class="button button-flat" ng-click="show()">
+      <i class="raleway-bold primary-color icon-left ion-checkmark-circled"> CONTINUE</i>
+    </button>
+    <button class="button button-flat" ui-sref="main">
+      <i class="raleway-bold primary-color icon-left ion-android-cancel"> CANCEL</i>
+    </button>
+  </div>
+</ion-content>
