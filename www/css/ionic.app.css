@@ -9110,9 +9110,11 @@ a.button {
   font-weight: normal;
   font-style: normal; }
 
-.options-image {
+.uploaded-image-thumbnail {
   padding: 20px;
-  position: relative; }
+  position: relative;
+  width: 100%;
+  height: 33%; }
 
 .output-format-checkbox {
   position: relative;

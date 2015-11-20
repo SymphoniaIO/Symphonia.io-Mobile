@@ -1,17 +1,16 @@
 angular.module('symphonia.controllers', ['ngCordova'])
 
-  .controller('MainCtrl', function ($scope, $cordovaCamera, $ionicPlatform) {
+  .controller('MainCtrl', function ($scope, $cordovaCamera, $ionicPlatform, $state, ImageService) {
     $ionicPlatform.ready(function () {
       $scope.uploadPicture = function () {
         var options = {
           destinationType: Camera.DestinationType.DATA_URL,
           sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-          //popoverOptions: CameraPopoverOptions
         };
 
         $cordovaCamera.getPicture(options).then(function (imageData) {
-          var image = document.getElementById('myImage');
-          image.src = "data:image/jpeg;base64," + imageData;
+          ImageService.saveImage(imageData);
+          $state.go('options');
         }, function (err) {
           // error
         });
@@ -21,12 +20,11 @@ angular.module('symphonia.controllers', ['ngCordova'])
         var new_options = {
           destinationType: Camera.DestinationType.DATA_URL,
           sourceType: Camera.PictureSourceType.CAMERA
-          //popoverOptions: CameraPopoverOptions
         };
 
         $cordovaCamera.getPicture(new_options).then(function (imageData) {
-          var image = document.getElementById('myImage');
-          image.src = "data:image/jpeg;base64," + imageData;
+          ImageService.saveImage(imageData);
+          $state.go('options');
         }, function (err) {
           // error
         });
@@ -34,14 +32,44 @@ angular.module('symphonia.controllers', ['ngCordova'])
     });
   })
 
-  .controller('OptionsCtrl', function ($scope, $ionicLoading, $timeout) {
+  .controller('OptionsCtrl', function ($scope, $ionicLoading, $timeout, ImageService) {
+    //$ionicPlatform.ready(function () {
+    //  $cordovaEmailComposer.isAvailable().then(function() {
+    //    // is available
+    //  }, function () {
+    //    // not available
+    //    $state.go('main');
+    //  });
+    //
+    //  $scope.sendEmail = function () {
+    //    var emailDetails = {
+    //      to: 'marosseleng@gmail.com',
+    //      attachments: [
+    //        'base64:picture.jpg//' + ImageService.getImage()
+    //        //,'file://README.pdf'
+    //      ],
+    //      subject: 'Greetings from app!',
+    //      body: 'This email was sent from my app!',
+    //      isHtml: false
+    //    };
+    //
+    //    $cordovaEmailComposer.open(emailDetails).then(function () {
+    //      //this.show();
+    //    }, function () {
+    //      this.show();
+    //      // user cancelled email
+    //    });
+    //  };
+    //});
+
     $scope.outputFormatList = [
       {text: 'Music XML', value: 'mxl'},
       {text: 'PDF', value: 'pdf'}
     ];
 
     $scope.data = {
-      clientSide: 'mxl'
+      outputFormat: 'mxl',
+      imageData: "data:image/jpeg;base64," + ImageService.getImage()
     };
 
     $scope.show = function () {
