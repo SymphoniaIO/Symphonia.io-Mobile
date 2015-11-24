@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <ion-content class="secondary-color-background" scroll="false" ng-controller="OptionsCtrl">
-  <img ng-src="{{data.imageData}}" class="uploaded-image-thumbnail"/>
+  <div class="uploaded-image-thumbnail">
+    <img ng-src="{{data.imageData}}"/>
+    <!--<img src="http://www.placehold.it/500x1000"/>-->
+  </div>
 
   <div class="list raleway-medium output-format-checkbox">
     <div>
@@ -13,7 +16,7 @@
     </ion-radio>
   </div>
 
-  <div class="my-buttons-options">
+  <div class="buttons-group_options">
     <button class="button button-flat" ng-click="show()">
       <i class="raleway-bold primary-color icon-left ion-checkmark-circled"> CONTINUE</i>
     </button>

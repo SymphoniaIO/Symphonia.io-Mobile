@@ -1,4 +1,4 @@
-angular.module('symphonia.controllers', ['ngCordova'])
+angular.module('symphonia.controllers', ['ngCordova','ng-walkthrough'])
 
   .controller('MainCtrl', function ($scope, $cordovaCamera, $ionicPlatform, $state, ImageService) {
     $ionicPlatform.ready(function () {
@@ -82,4 +82,7 @@ angular.module('symphonia.controllers', ['ngCordova'])
         $ionicLoading.hide();
       }, 2000);
     };
+  })
+  .controller('AboutCtrl', function() {
+
   });

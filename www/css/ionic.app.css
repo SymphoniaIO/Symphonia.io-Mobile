@@ -9110,55 +9110,71 @@ a.button {
   font-weight: normal;
   font-style: normal; }
 
+.raleway-regular, .walkthrough-element.walkthrough-text {
+  font-family: 'ralewayregular'; }
+
+.raleway-medium, .about-text_about {
+  font-family: 'ralewaymedium'; }
+
+.raleway-bold {
+  font-family: 'ralewaybold'; }
+
+ion-content {
+  background-color: #453d36 !important; }
+
 .uploaded-image-thumbnail {
-  padding: 20px;
+  overflow: hidden;
   position: relative;
   width: 100%;
   height: 33%; }
+  .uploaded-image-thumbnail img {
+    padding: 20px;
+    display: block;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; }
 
 .output-format-checkbox {
   position: relative;
   margin-top: 20px; }
-
-.output-format-checkbox p {
-  text-align: center;
-  font-size: 150%; }
-
-.item, .item-complex .item-content, .item-radio .item-content {
-  background-color: #eeeeee !important; }
-
-.item-radio input:checked + .radio-content .item-content {
-  background: #eeeeee !important; }
+  .output-format-checkbox p {
+    text-align: center;
+    font-size: 150%; }
 
 .banner-background {
   background: url("../img/banner.jpg") no-repeat center center fixed;
   background-size: cover; }
 
-.secondary-color-background {
-  background-color: #453d36; }
-
 .title {
-  padding-top: 25%;
+  padding-top: 15vh;
   text-align: center;
-  font-size: 250%;
+  font-size: 6vh;
   color: #eeeeee; }
 
-.my-buttons, .my-buttons-options {
+.about-text_about {
+  font-size: 3vh;
+  line-height: 4vh;
+  text-align: center; }
+
+.buttons-group_main, .buttons-group_options {
   position: absolute;
   width: 100%;
-  bottom: 25%;
+  bottom: 15vh;
   text-align: center; }
-  .my-buttons button, .my-buttons-options button {
+  .buttons-group_main button, .buttons-group_options button {
     position: relative;
     margin: 10px auto;
     display: block !important; }
 
-.my-buttons-options {
+.buttons-group_options {
   position: relative;
   margin-top: 60px;
   bottom: 0; }
 
-.primary-color {
+.primary-color, .about-text_about {
   color: #eeeeee; }
 
 .secondary-color {
@@ -9167,11 +9183,35 @@ a.button {
 .secondary-color-dark {
   color: #3b3733; }
 
-.raleway-regular {
-  font-family: 'ralewayregular'; }
+.walkthrough-element.walkthrough-done-button {
+  position: absolute;
+  bottom: 30px;
+  height: 30px;
+  width: 80px;
+  display: inline-block;
+  right: 30px;
+  margin: 0 auto; }
 
-.raleway-medium {
-  font-family: 'ralewaymedium'; }
+.walkthrough-element.walkthrough-text {
+  color: #eeeeee;
+  text-align: center; }
 
-.raleway-bold {
-  font-family: 'ralewaybold'; }
+.walkthrough-button-positive {
+  border-color: #3b3733 !important;
+  background-color: #453d36 !important;
+  color: #eeeeee !important; }
+
+.walkthrough-button-positive:hover {
+  color: #eeeeee !important;
+  text-decoration: none; }
+
+.walkthrough-button-positive.active {
+  border-color: #3b3733 !important;
+  background-color: #3b3733 !important;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
+
+.item, .item-complex .item-content, .item-radio .item-content {
+  background-color: #eeeeee !important; }
+
+.item-radio input:checked + .radio-content .item-content {
+  background: #eeeeee !important; }

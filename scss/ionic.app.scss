@@ -23,73 +23,89 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "www/lib/ionic/scss/ionic";
 @import "raleway";
 
-$banner-img: '../img/banner.jpg';
-$primary-color: #eeeeee;
-$secondary-color: #453d36;
-$secondary-dark: #3b3733;
+$global_banner-img: '../img/banner.jpg';
+$global_primary-color: #eeeeee;
+$global_secondary-color: #453d36;
+$global_secondary-dark: #3b3733;
+$global_button-font-size: 180%;
+$global_button-margin: 10px auto;
+$global_buttons-block-width: 100%;
 
-$padding-top-title: 25%;
-$title-font-size: 250%;
+$main_padding-top-title: 15vh;
+$main_title-font-size: 6vh;
+$main_my-buttons-bottom: $main_padding-top-title;
 
-$button-font-size: 180%;
-$button-margin: 10px auto;
-$buttons-block-width: 100%;
-$options-buttons-block-margin-top: 60px;
-$options-buttons-block-bottom: 0;
+$options_buttons-block-margin-top: 60px;
+$options_buttons-block-bottom: 0;
+$options_image-padding: 20px;
+$options_output-format-checkbox-margin-top: 20px;
+$options_output-format-checkbox-label-padding-left: 16px;
+$options_output-format-checkbox-p-text-size: 150%;
 
-$options-image-padding: 20px;
-$output-format-checkbox-margin-top: 20px;
-$output-format-checkbox-label-padding-left: 16px;
-$output-format-checkbox-paragraph-text-size: 150%;
+ion-content {
+  background-color: $global_secondary-color !important;
+}
 
 .uploaded-image-thumbnail {
-  padding: $options-image-padding;
+  overflow: hidden;
   position: relative;
+  width: 100%;
+  height: 33%;
+
+  img {
+    padding: $options_image-padding;
+    display: block;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 }
 
 .output-format-checkbox {
   position: relative;
-  margin-top: $output-format-checkbox-margin-top;
+  margin-top: $options_output-format-checkbox-margin-top;
 
   p {
     text-align: center;
-    font-size: $output-format-checkbox-paragraph-text-size;
+    font-size: $options_output-format-checkbox-p-text-size;
   }
 }
-
-.item, .item-complex .item-content, .item-radio .item-content {
-  background-color: $primary-color !important;
-}
-
-.item-radio input:checked + .radio-content .item-content {
-  background: $primary-color !important;
-}
-
 .banner-background {
-  background: url($banner-img) no-repeat center center fixed;
+  background: url($global_banner-img) no-repeat center center fixed;
   background-size: cover;
 }
 
 .secondary-color-background {
-  background-color: $secondary-color;
+  //background-color: $global_secondary-color;
 }
 
 .title {
-  padding-top: $padding-top-title;
+  padding-top: $main_padding-top-title;
   text-align: center;
-  font-size: $title-font-size;
-  color: $primary-color;
+  font-size: $main_title-font-size;
+  color: $global_primary-color;
 }
 
-.my-buttons {
+.about-text_about {
+  @extend .raleway-medium;
+  @extend .primary-color;
+  font-size: 3vh;
+  line-height: 4vh;
+  text-align: center;
+}
+
+.buttons-group_main {
   position: absolute;
-  width: $buttons-block-width;
-  bottom: $padding-top-title;
+  width: $global_buttons-block-width;
+  bottom: $main_my-buttons-bottom;
   text-align: center;
 
   button {
     position: relative;
-    margin: $button-margin;
+    margin: $global_button-margin;
     display: block !important;
 
     i {
@@ -98,34 +114,64 @@ $output-format-checkbox-paragraph-text-size: 150%;
   }
 }
 
-.my-buttons-options {
-  @extend .my-buttons;
-
+.buttons-group_options {
+  @extend .buttons-group_main;
   position: relative;
-  margin-top: $options-buttons-block-margin-top;
-  bottom: $options-buttons-block-bottom;
+  margin-top: $options_buttons-block-margin-top;
+  bottom: $options_buttons-block-bottom;
 }
 
 .primary-color {
-  color: $primary-color;
+  color: $global_primary-color;
 }
 
 .secondary-color {
-  color: $secondary-color;;
+  color: $global_secondary-color;;
 }
 
 .secondary-color-dark {
-  color: $secondary-dark;
+  color: $global_secondary-dark;
 }
 
-.raleway-regular {
-  font-family: 'ralewayregular';
+//WALKTHROUGH OVERRIDES HERE
+.walkthrough-element.walkthrough-done-button {
+  position: absolute;
+  bottom: 30px;
+  height: 30px;
+  width: 80px;
+  display: inline-block;
+  right: 30px;
+  margin: 0 auto;
 }
 
-.raleway-medium {
-  font-family: 'ralewaymedium';
+.walkthrough-element.walkthrough-text {
+  @extend .raleway-regular;
+  color: $global_primary-color;
+  text-align: center;
 }
 
-.raleway-bold {
-  font-family: 'ralewaybold';
+.walkthrough-button-positive {
+  border-color: $global_secondary-dark !important;
+  background-color: $global_secondary-color !important;
+  color: $global_primary-color !important;
+}
+
+.walkthrough-button-positive:hover {
+  color: $global_primary-color !important;
+  text-decoration: none;
+}
+
+.walkthrough-button-positive.active {
+  border-color: $global_secondary-dark !important;
+  background-color: $global_secondary-dark !important;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+//OVERRIDING RADIO
+.item, .item-complex .item-content, .item-radio .item-content {
+  background-color: $global_primary-color !important;
+}
+
+.item-radio input:checked + .radio-content .item-content {
+  background: $global_primary-color !important;
 }

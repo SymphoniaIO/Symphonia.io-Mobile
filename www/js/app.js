@@ -34,6 +34,11 @@ angular.module('symphonia', ['ionic', 'symphonia.controllers', 'symphonia.servic
         url: '/options',
         templateUrl: 'templates/options.html',
         controller: 'OptionsCtrl'
+      })
+      .state('about', {
+        url:'/about',
+        templateUrl: 'templates/about.html',
+        controller: 'AboutCtrl'
       });
 
     $urlRouterProvider.otherwise('/main');
