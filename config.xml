@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget xmlns:cdv="http://cordova.apache.org/ns/1.0" id="io.symphonia.app" version="0.0.1" xmlns="http://www.w3.org/ns/widgets">
+<widget xmlns:cdv="http://cordova.apache.org/ns/1.0" id="io.symphonia.app" version="0.0.1"
+        xmlns="http://www.w3.org/ns/widgets">
   <name>Symphonia.io</name>
   <description>
     A mobile application for Symphonia.io.
@@ -18,8 +19,7 @@
   <preference name="SplashScreen" value="screen"/>
   <preference name="SplashScreenDelay" value="3000"/>
   <preference name="orientation" value="portrait"/>
-  <preference name="StatusBarOverlaysWebView" value="false"/>
-  <preference name="StatusBarBackgroundColor" value="#3b3733"/>
+  <preference name="StatusBarOverlaysWebView" value="true"/>
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
@@ -64,3 +64,4 @@
   </platform>
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>
+  <!--<preference name="StatusBarBackgroundColor" value="#3b3733"/>-->
