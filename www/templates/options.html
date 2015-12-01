@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<ion-content class="secondary-color-background" scroll="false" ng-controller="OptionsCtrl">
-  <div class="uploaded-image-thumbnail">
+<ion-content scroll="false" ng-controller="OptionsCtrl">
+  <div class="image-thumbnail_options">
     <img ng-src="{{data.imageData}}"/>
-    <!--<img src="http://www.placehold.it/500x1000"/>-->
   </div>
 
-  <div class="list raleway-medium output-format-checkbox">
-    <div>
-      <p class="primary-color">Select output file format</p>
+  <div class="list format-radio_options">
+    <div class="checkbox-label_options">
+      <p>Select output file format</p>
     </div>
     <ion-radio ng-repeat="item in outputFormatList"
                ng-value="item.value"
@@ -18,10 +16,10 @@
 
   <div class="buttons-group_options">
     <button class="button button-flat" ng-click="show()">
-      <i class="raleway-bold primary-color icon-left ion-checkmark-circled"> CONTINUE</i>
+      <i class="icon-left ion-checkmark-circled"> CONTINUE</i>
     </button>
     <button class="button button-flat" ui-sref="main">
-      <i class="raleway-bold primary-color icon-left ion-android-cancel"> CANCEL</i>
+      <i class="icon-left ion-android-cancel"> CANCEL</i>
     </button>
   </div>
 </ion-content>

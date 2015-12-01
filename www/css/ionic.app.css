@@ -6483,29 +6483,29 @@ button.item.item-button-right {
   .card .item:last-child {
     border-bottom: 0; }
 
-.padding .card, .padding .list-inset {
+.padding .card, .text_about .card, .text_success .card, .padding .list-inset, .text_about .list-inset, .text_success .list-inset {
   margin-left: 0;
   margin-right: 0; }
 
 .card .item:first-child,
 .list-inset .item:first-child,
-.padding > .list .item:first-child {
+.padding > .list .item:first-child, .text_about > .list .item:first-child, .text_success > .list .item:first-child {
   border-top-left-radius: 2px;
   border-top-right-radius: 2px; }
   .card .item:first-child .item-content,
   .list-inset .item:first-child .item-content,
-  .padding > .list .item:first-child .item-content {
+  .padding > .list .item:first-child .item-content, .text_about > .list .item:first-child .item-content, .text_success > .list .item:first-child .item-content {
     border-top-left-radius: 2px;
     border-top-right-radius: 2px; }
 
 .card .item:last-child,
 .list-inset .item:last-child,
-.padding > .list .item:last-child {
+.padding > .list .item:last-child, .text_about > .list .item:last-child, .text_success > .list .item:last-child {
   border-bottom-right-radius: 2px;
   border-bottom-left-radius: 2px; }
   .card .item:last-child .item-content,
   .list-inset .item:last-child .item-content,
-  .padding > .list .item:last-child .item-content {
+  .padding > .list .item:last-child .item-content, .text_about > .list .item:last-child .item-content, .text_success > .list .item:last-child .item-content {
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px; }
 
@@ -6515,13 +6515,13 @@ button.item.item-button-right {
 
 .card .item,
 .list-inset .item,
-.padding > .list .item,
+.padding > .list .item, .text_about > .list .item, .text_success > .list .item,
 .padding-horizontal > .list .item {
   margin-right: 0;
   margin-left: 0; }
   .card .item.item-input input,
   .list-inset .item.item-input input,
-  .padding > .list .item.item-input input,
+  .padding > .list .item.item-input input, .text_about > .list .item.item-input input, .text_success > .list .item.item-input input,
   .padding-horizontal > .list .item.item-input input {
     padding-right: 44px; }
 
@@ -6732,7 +6732,7 @@ button.item.item-button-right {
     right: 0;
     left: 0; }
 
-.overflow-scroll.padding > .scroll.overscroll {
+.overflow-scroll.padding > .scroll.overscroll, .overflow-scroll.text_about > .scroll.overscroll, .overflow-scroll.text_success > .scroll.overscroll {
   padding: 10px; }
 
 @-webkit-keyframes refresh-spin {
@@ -8243,7 +8243,7 @@ progress {
       box-shadow: none;
       color: #fff; }
 
-.padding > .button.button-block:first-child {
+.padding > .button.button-block:first-child, .text_about > .button.button-block:first-child, .text_success > .button.button-block:first-child {
   margin-top: 0; }
 
 .button-block {
@@ -8719,7 +8719,7 @@ a.button {
  * Content Padding
  * --------------------------------------------------
  */
-.padding {
+.padding, .text_about, .text_success {
   padding: 10px; }
 
 .padding-top,
@@ -9113,22 +9113,57 @@ a.button {
 .raleway-regular, .walkthrough-element.walkthrough-text {
   font-family: 'ralewayregular'; }
 
-.raleway-medium, .about-text_about {
+.raleway-medium {
   font-family: 'ralewaymedium'; }
 
 .raleway-bold {
   font-family: 'ralewaybold'; }
 
+.buttons-group_main, .buttons-group_options, .buttons-group_about, .buttons-group_success {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 15vh; }
+  .buttons-group_main button, .buttons-group_options button, .buttons-group_about button, .buttons-group_success button {
+    position: relative;
+    margin: 10px auto;
+    display: block !important; }
+    .buttons-group_main button i, .buttons-group_options button i, .buttons-group_about button i, .buttons-group_success button i {
+      font-family: ralewaybold; }
+
+.title_main, .title_about, .title_success {
+  font-family: ralewaybold;
+  padding-top: 15vh;
+  text-align: center;
+  font-size: 6vh; }
+
+.text_about, .text_success {
+  font-family: ralewaymedium;
+  font-size: 3vh;
+  line-height: 4vh;
+  text-align: center;
+  position: relative;
+  margin-top: 6vh; }
+
 ion-content {
   background-color: #453d36 !important; }
 
-.uploaded-image-thumbnail {
+.banner-background {
+  background: url("../img/banner.jpg") no-repeat center center fixed;
+  background-size: cover; }
+
+.title_main {
+  color: #eeeeee; }
+
+.buttons-group_main i {
+  color: #453d36; }
+
+.image-thumbnail_options {
   overflow: hidden;
   position: relative;
   width: 100%;
   height: 33%; }
-  .uploaded-image-thumbnail img {
-    padding: 20px;
+  .image-thumbnail_options img {
     display: block;
     width: 100%;
     position: absolute;
@@ -9137,51 +9172,39 @@ ion-content {
     right: 0;
     bottom: 0; }
 
-.output-format-checkbox {
+.format-radio_options {
   position: relative;
-  margin-top: 20px; }
-  .output-format-checkbox p {
+  margin-top: 20px;
+  font-family: ralewaymedium; }
+  .format-radio_options p {
     text-align: center;
     font-size: 150%; }
 
-.banner-background {
-  background: url("../img/banner.jpg") no-repeat center center fixed;
-  background-size: cover; }
-
-.title {
-  padding-top: 15vh;
-  text-align: center;
-  font-size: 6vh;
+.buttons-group_options i {
   color: #eeeeee; }
 
-.about-text_about {
-  font-size: 3vh;
-  line-height: 4vh;
-  text-align: center; }
-
-.buttons-group_main, .buttons-group_options {
-  position: absolute;
-  width: 100%;
-  bottom: 15vh;
-  text-align: center; }
-  .buttons-group_main button, .buttons-group_options button {
-    position: relative;
-    margin: 10px auto;
-    display: block !important; }
-
-.buttons-group_options {
-  position: relative;
-  margin-top: 60px;
-  bottom: 0; }
-
-.primary-color, .about-text_about {
+.checkbox-label_options p {
   color: #eeeeee; }
 
-.secondary-color {
-  color: #453d36; }
+.title_about {
+  color: #eeeeee;
+  position: relative; }
 
-.secondary-color-dark {
-  color: #3b3733; }
+.text_about {
+  color: #eeeeee; }
+
+.buttons-group_about i {
+  color: #eeeeee; }
+
+.title_success {
+  color: #eeeeee;
+  position: relative; }
+
+.text_success {
+  color: #eeeeee; }
+
+.buttons-group_success i {
+  color: #eeeeee; }
 
 .walkthrough-element.walkthrough-done-button {
   position: absolute;

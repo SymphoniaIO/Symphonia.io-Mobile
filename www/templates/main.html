@@ -1,17 +1,17 @@
 <ion-content class="banner-background" scroll="false" ng-controller="MainCtrl">
-  <div class="raleway-bold title">
+  <div class="raleway-bold title_main">
     <p>SYMPHONIA.IO</p>
   </div>
 
   <div class="buttons-group_main">
-    <button class="button button-flat button-centered" ng-click="takeAPicture()" id="takeApictureButton">
-      <i class="raleway-bold secondary-color icon-left ion-camera"> TAKE A PICTURE</i>
+    <button class="button button-flat" ng-click="takeAPicture()" id="takeApictureButton">
+      <i class="icon-left ion-camera"> TAKE A PICTURE</i>
     </button>
-    <button class="button button-flat button-centered" ng-click="uploadPicture()">
-      <i class="raleway-bold secondary-color icon-left ion-upload"> UPLOAD</i>
+    <button class="button button-flat" ng-click="uploadPicture()">
+      <i class="icon-left ion-android-upload"> UPLOAD</i>
     </button>
-    <button class="button button-flat button-centered" ui-sref="about">
-      <i class="raleway-bold secondary-color icon-left ion-information-circled"> ABOUT THE APP</i>
+    <button class="button button-flat" ui-sref="about">
+      <i class="icon-left ion-information-circled"> ABOUT THE APP</i>
     </button>
   </div>
   <!--<walkthrough is-active="true"-->

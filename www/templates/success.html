@@ -1,0 +1,21 @@
+<ion-content scroll="false" ng-controller="SuccessCtrl">
+  <div class="title_success">
+    <p>SUCCESS</p>
+  </div>
+
+  <div class="text_success">
+    <p>some text here</p>
+  </div>
+
+  <div class="buttons-group_success">
+    <button class="button button-flat" ng-click="sendEmail()" ng-show="emailAvailable">
+      <i class="icon-left ion-paper-airplane"> SEND AN EMAIL</i>
+    </button>
+    <button class="button button-flat">
+      <i class="icon-left ion-android-download"> DOWNLOAD</i>
+    </button>
+    <button class="button button-flat" ui-sref="main">
+      <i class="icon-left ion-android-cancel"> CANCEL</i>
+    </button>
+  </div>
+</ion-content>

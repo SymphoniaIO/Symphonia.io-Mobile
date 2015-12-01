@@ -39,7 +39,18 @@ angular.module('symphonia', ['ionic', 'symphonia.controllers', 'symphonia.servic
         url:'/about',
         templateUrl: 'templates/about.html',
         controller: 'AboutCtrl'
-      });
+      })
+      .state('success', {
+        url:'/success',
+        templateUrl: 'templates/success.html',
+        controller: 'SuccessCtrl'
+      })
+      //.state('failure', {
+      //  url: '/failure',
+      //  templateUrl: 'templates/failure.html',
+      //  controller: 'FailureCtrl'
+      //})
+    ;
 
     $urlRouterProvider.otherwise('/main');
   });

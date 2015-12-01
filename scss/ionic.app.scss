@@ -23,6 +23,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "www/lib/ionic/scss/ionic";
 @import "raleway";
 
+// VARIABLES
 $global_banner-img: '../img/banner.jpg';
 $global_primary-color: #eeeeee;
 $global_secondary-color: #453d36;
@@ -30,10 +31,13 @@ $global_secondary-dark: #3b3733;
 $global_button-font-size: 180%;
 $global_button-margin: 10px auto;
 $global_buttons-block-width: 100%;
+$global_text-font-size: 3vh;
+$global_text-line-height: 4vh;
+$global_text-margin-top: 6vh;
+$global_padding-top-title: 15vh;
+$global_title-font-size: 6vh;
 
-$main_padding-top-title: 15vh;
-$main_title-font-size: 6vh;
-$main_my-buttons-bottom: $main_padding-top-title;
+$main_my-buttons-bottom: $global_padding-top-title;
 
 $options_buttons-block-margin-top: 60px;
 $options_buttons-block-bottom: 0;
@@ -42,18 +46,71 @@ $options_output-format-checkbox-margin-top: 20px;
 $options_output-format-checkbox-label-padding-left: 16px;
 $options_output-format-checkbox-p-text-size: 150%;
 
+//ABSTRACT CLASSES
+%buttons-group_abstract {
+  width: $global_buttons-block-width;
+  text-align: center;
+  position: absolute;
+  bottom: $main_my-buttons-bottom;
+
+  button {
+    position: relative;
+    margin: $global_button-margin;
+    display: block !important;
+
+    i {
+      font-family: ralewaybold;
+    }
+  }
+}
+
+%title_abstract {
+  font-family: ralewaybold;
+  padding-top: $global_padding-top-title;
+  text-align: center;
+  font-size: $global_title-font-size;
+}
+
+%text_abstract {
+  @extend .padding;
+  font-family: ralewaymedium;
+  font-size: $global_text-font-size;
+  line-height: $global_text-line-height;
+  text-align: center;
+  position: relative;
+  margin-top: $global_text-margin-top;
+}
+
+//DEFAULT BACKGROUND
 ion-content {
   background-color: $global_secondary-color !important;
 }
 
-.uploaded-image-thumbnail {
+.banner-background {
+  background: url($global_banner-img) no-repeat center center fixed;
+  background-size: cover;
+}
+
+.title_main {
+  @extend %title_abstract;
+  color: $global_primary-color;
+}
+
+.buttons-group_main {
+  @extend %buttons-group_abstract;
+
+  i {
+    color: $global_secondary-color;
+  }
+}
+
+.image-thumbnail_options {
   overflow: hidden;
   position: relative;
   width: 100%;
   height: 33%;
 
   img {
-    padding: $options_image-padding;
     display: block;
     width: 100%;
     position: absolute;
@@ -64,73 +121,67 @@ ion-content {
   }
 }
 
-.output-format-checkbox {
+.format-radio_options {
   position: relative;
   margin-top: $options_output-format-checkbox-margin-top;
+  font-family: ralewaymedium;
 
   p {
     text-align: center;
     font-size: $options_output-format-checkbox-p-text-size;
   }
 }
-.banner-background {
-  background: url($global_banner-img) no-repeat center center fixed;
-  background-size: cover;
-}
 
-.secondary-color-background {
-  //background-color: $global_secondary-color;
-}
+.buttons-group_options {
+  @extend %buttons-group_abstract;
 
-.title {
-  padding-top: $main_padding-top-title;
-  text-align: center;
-  font-size: $main_title-font-size;
-  color: $global_primary-color;
-}
-
-.about-text_about {
-  @extend .raleway-medium;
-  @extend .primary-color;
-  font-size: 3vh;
-  line-height: 4vh;
-  text-align: center;
-}
-
-.buttons-group_main {
-  position: absolute;
-  width: $global_buttons-block-width;
-  bottom: $main_my-buttons-bottom;
-  text-align: center;
-
-  button {
-    position: relative;
-    margin: $global_button-margin;
-    display: block !important;
-
-    i {
-      //font-size: $button-font-size !important;
-    }
+  i {
+    color: $global_primary-color;
   }
 }
 
-.buttons-group_options {
-  @extend .buttons-group_main;
-  position: relative;
-  margin-top: $options_buttons-block-margin-top;
-  bottom: $options_buttons-block-bottom;
+.checkbox-label_options {
+  p {
+    color: $global_primary-color;
+  }
 }
 
-.primary-color {
+.title_about {
+  @extend %title_abstract;
+  color: $global_primary-color;
+  position: relative;
+}
+
+.text_about {
+  @extend %text_abstract;
   color: $global_primary-color;
 }
 
-.secondary-color {
-  color: $global_secondary-color;;
+.buttons-group_about {
+  @extend %buttons-group_abstract;
+
+  i {
+    color: $global_primary-color;
+  }
 }
 
-.secondary-color-dark {
-  color: $global_secondary-dark;
+.title_success {
+  @extend %title_abstract;
+  color: $global_primary-color;
+  position: relative;
+}
+
+.text_success {
+  @extend %text_abstract;
+  color: $global_primary-color;
+}
+
+.buttons-group_success {
+  @extend %buttons-group_abstract;
+  
+  i {
+    color: $global_primary-color;
+  }
 }
 
 //WALKTHROUGH OVERRIDES HERE

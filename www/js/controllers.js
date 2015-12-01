@@ -1,4 +1,4 @@
-angular.module('symphonia.controllers', ['ngCordova','ng-walkthrough'])
+angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
 
   .controller('MainCtrl', function ($scope, $cordovaCamera, $ionicPlatform, $state, ImageService) {
     $ionicPlatform.ready(function () {
@@ -32,36 +32,7 @@ angular.module('symphonia.controllers', ['ngCordova','ng-walkthrough'])
     });
   })
 
-  .controller('OptionsCtrl', function ($scope, $ionicLoading, $timeout, ImageService) {
-    //$ionicPlatform.ready(function () {
-    //  $cordovaEmailComposer.isAvailable().then(function() {
-    //    // is available
-    //  }, function () {
-    //    // not available
-    //    $state.go('main');
-    //  });
-    //
-    //  $scope.sendEmail = function () {
-    //    var emailDetails = {
-    //      to: 'marosseleng@gmail.com',
-    //      attachments: [
-    //        'base64:picture.jpg//' + ImageService.getImage()
-    //        //,'file://README.pdf'
-    //      ],
-    //      subject: 'Greetings from app!',
-    //      body: 'This email was sent from my app!',
-    //      isHtml: false
-    //    };
-    //
-    //    $cordovaEmailComposer.open(emailDetails).then(function () {
-    //      //this.show();
-    //    }, function () {
-    //      this.show();
-    //      // user cancelled email
-    //    });
-    //  };
-    //});
-
+  .controller('OptionsCtrl', function ($scope, $ionicLoading, $timeout, $state, ImageService) {
     $scope.outputFormatList = [
       {text: 'Music XML', value: 'mxl'},
       {text: 'PDF', value: 'pdf'}
@@ -80,9 +51,46 @@ angular.module('symphonia.controllers', ['ngCordova','ng-walkthrough'])
       });
       $timeout(function () {
         $ionicLoading.hide();
+        $state.go('success');
       }, 2000);
     };
   })
-  .controller('AboutCtrl', function() {
+
+  .controller('AboutCtrl', function () {
+
+  })
+
+  .controller('SuccessCtrl', function ($state, $scope, $ionicPlatform, $cordovaEmailComposer, ImageService) {
+    $ionicPlatform.ready(function () {
+      $cordovaEmailComposer.isAvailable().then(function () {
+        $scope.emailAvailable = true;
+        // is available
+      }, function () {
+        $scope.emailAvailable = false;
+        // not available
+      });
+    });
+
+    $scope.sendEmail = function () {
+      var emailDetails = {
+        app: 'mailto',
+        attachments: [
+          'base64:picture.jpg//' + ImageService.getImage()
+          //,'file://README.pdf'
+        ],
+        subject: 'Digitalized music scores',
+        body: 'This email contains file with music scores, that was produced by the <a href="https://www.symphonia.io">SYMPHONIA.IO</a> service.',
+        isHtml: true
+      };
+
+      $cordovaEmailComposer.open(emailDetails).then(function() {
+
+      }, function () {
+        // user cancelled email
+      });
+    };
+  })
+
+  .controller('FailureCtrl', function () {
 
   });
