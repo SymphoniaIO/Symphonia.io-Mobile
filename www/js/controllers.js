@@ -62,7 +62,7 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
 
   })
 
-  .controller('SuccessCtrl', function ($state, $http, $scope, $ionicPlatform, $cordovaFile, $cordovaEmailComposer, $cordovaDialogs, ImageUploadService) {
+  .controller('SuccessCtrl', function ($state, $http, $scope, $ionicPlatform, $cordovaDevice, $cordovaFile, $cordovaEmailComposer, $cordovaDialogs, ImageUploadService) {
     $ionicPlatform.ready(function () {
       $cordovaEmailComposer.isAvailable().then(function () {
         $scope.emailAvailable = true;
@@ -93,12 +93,16 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
       $scope.downloadWatImage = function () {
         $cordovaDialogs.prompt('Enter the name of a file, WITHOUT suffix', 'Filename', ['Cancel','Save'], 'scores')
           .then(function(result) {
-
+            var saveDestination;
+            if ($cordovaDevice.getPlatform() === 'iOS') {
+              saveDestination = cordova.file.dataDirectory;
+            } else if ($cordovaDevice.getPlatform() === 'Android') {
+              saveDestination = cordova.file.externalDataDirectory;
+            } else {
+              return;
+            }
             $http.get('http://www.cypherpunks.to/~peter/06_random.pdf', {responseType: 'arraybuffer'}).then(function (response) {
-              //var file = new Blob([response], { type: 'application/pdf' });
-              //var fileURL = URL.createObjectURL(file);
-              //$scope.pdfContent = $sce.trustAsResourceUrl(fileURL);
-              $cordovaFile.writeFile(cordova.file.externalDataDirectory, result.input1 + '.pdf', response.data, true);
+              $cordovaFile.writeFile(saveDestination, result.input1 + '.pdf', response.data, true);
             }, function () {
 
             });

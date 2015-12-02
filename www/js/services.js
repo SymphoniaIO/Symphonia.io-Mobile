@@ -1,5 +1,5 @@
 angular.module('symphonia.services', [])
-  .service('ImageService', function () {
+  .service('ImageUploadService', function () {
     var imageString;
 
     return {
@@ -10,5 +10,8 @@ angular.module('symphonia.services', [])
         return imageString;
       }
     };
+  })
+  .service('FileDownloadService', function () {
+
   });
 
