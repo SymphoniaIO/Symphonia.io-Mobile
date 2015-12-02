@@ -4,15 +4,16 @@
   </div>
 
   <div class="text_success">
-    <p>some text here</p>
+    <p>Your scores have been successfully processed.</p>
+    <p>Now you can choose what to do with the result file or return to main screen.</p>
   </div>
 
   <div class="buttons-group_success">
     <button class="button button-flat" ng-click="sendEmail()" ng-show="emailAvailable">
-      <i class="icon-left ion-paper-airplane"> SEND AN EMAIL</i>
+      <i class="icon-left ion-paper-airplane"> SHARE VIA EMAIL</i>
     </button>
-    <button class="button button-flat">
-      <i class="icon-left ion-android-download"> DOWNLOAD</i>
+    <button class="button button-flat" ng-click="downloadWatImage()">
+      <i class="icon-left ion-android-download"> SAVE</i>
     </button>
     <button class="button button-flat" ui-sref="main">
       <i class="icon-left ion-android-cancel"> CANCEL</i>

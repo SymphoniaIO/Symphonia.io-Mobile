@@ -116,8 +116,6 @@ ion-content {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
   }
 }
 
@@ -178,7 +176,7 @@ ion-content {
 
 .buttons-group_success {
   @extend %buttons-group_abstract;
-  
+
   i {
     color: $global_primary-color;
   }
