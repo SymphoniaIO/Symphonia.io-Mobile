@@ -1,38 +1,39 @@
-angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
+/*
+ * Copyright 2016 Maroš Šeleng
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-  .controller('MainCtrl', function ($scope, $cordovaCamera, $ionicPlatform, $state, ImageUploadService) {
+angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
+  //TODO move logic to services!
+
+  .controller('MainCtrl', function ($scope, $ionicPlatform, $state, ImageLoadService) {
     $ionicPlatform.ready(function () {
       $scope.uploadPicture = function () {
-        var options = {
-          destinationType: Camera.DestinationType.DATA_URL,
-          sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-        };
-
-        $cordovaCamera.getPicture(options).then(function (imageData) {
-          ImageUploadService.saveImage(imageData);
+        ImageLoadService.upload(function () {
           $state.go('options');
-        }, function (err) {
-          // error
         });
       };
 
       $scope.takeAPicture = function () {
-        var new_options = {
-          destinationType: Camera.DestinationType.DATA_URL,
-          sourceType: Camera.PictureSourceType.CAMERA
-        };
-
-        $cordovaCamera.getPicture(new_options).then(function (imageData) {
-          ImageUploadService.saveImage(imageData);
+        ImageLoadService.take(function () {
           $state.go('options');
-        }, function (err) {
-          // error
         });
-      }
+      };
     });
   })
 
-  .controller('OptionsCtrl', function ($scope, $ionicLoading, $timeout, $state, ImageUploadService) {
+  .controller('OptionsCtrl', function ($scope, $ionicLoading, $timeout, $state, ImageLoadService) {
     $scope.outputFormatList = [
       {text: 'Music XML', value: 'mxl'},
       {text: 'PDF', value: 'pdf'}
@@ -40,10 +41,11 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
 
     $scope.data = {
       outputFormat: 'mxl',
-      imageData: "data:image/jpeg;base64," + ImageUploadService.getImage()
+      imageData: ImageLoadService.getBase64()
     };
 
     $scope.show = function () {
+      console.log("imageData:\n" + $scope.data.imageData);
       $ionicLoading.show({
         template: '<div class="loader"><svg class="circular">' +
         '<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>' +
@@ -62,7 +64,7 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
 
   })
 
-  .controller('SuccessCtrl', function ($state, $http, $scope, $ionicPlatform, $cordovaDevice, $cordovaFile, $cordovaEmailComposer, $cordovaDialogs, ImageUploadService) {
+  .controller('SuccessCtrl', function ($state, $http, $scope, $ionicPlatform, $cordovaDevice, $cordovaFile, $cordovaEmailComposer, $cordovaDialogs, $cordovaFileTransfer, ImageLoadService) {
     $ionicPlatform.ready(function () {
       $cordovaEmailComposer.isAvailable().then(function () {
         $scope.emailAvailable = true;
@@ -71,7 +73,7 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
           var emailDetails = {
             app: 'mailto',
             attachments: [
-              'base64:picture.jpg//' + ImageUploadService.getImage()
+              'base64:picture.jpg//' + ImageLoadService.getImageURI()
               //,'file://README.pdf'
             ],
             subject: 'Digitalized music scores',
@@ -91,23 +93,48 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
       });
 
       $scope.downloadWatImage = function () {
-        $cordovaDialogs.prompt('Enter the name of a file, WITHOUT suffix', 'Filename', ['Cancel','Save'], 'scores')
-          .then(function(result) {
+        $cordovaDialogs.prompt('Enter the name of a file, WITHOUT suffix', 'Filename', ['Cancel', 'Save'], 'scores')
+          .then(function (result) {
             var saveDestination;
             if ($cordovaDevice.getPlatform() === 'iOS') {
-              saveDestination = cordova.file.dataDirectory;
+              saveDestination = cordova.file.tempDirectory;
             } else if ($cordovaDevice.getPlatform() === 'Android') {
               saveDestination = cordova.file.externalDataDirectory;
             } else {
               return;
             }
-            $http.get('http://www.cypherpunks.to/~peter/06_random.pdf', {responseType: 'arraybuffer'}).then(function (response) {
-              $cordovaFile.writeFile(saveDestination, result.input1 + '.pdf', response.data, true);
-            }, function () {
 
-            });
+
+            var options = new FileUploadOptions();
+            options.fileKey = 'attachment';
+            options.fileName = 'blablabla.png';
+
+
+            var fd = new FormData();
+            fd.append('attachment', 'base64:picture.jpg//' + ImageLoadService.getImageURI());
+            $http.post('http://demo5941478.mockable.io/image', fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+              })
+              .then(function () {
+                console.log("blablabla")
+                console.log('base64:picture.jpg//' + ImageLoadService.getImageURI());
+              }, function () {
+              });
+            //$http.post('http://demo5941478.mockable.io/image', {'attachment':'base64:picture.jpg//' + ImageLoadService.getImageURI()}, {responseType: 'arraybuffer'})
+            //  .then(function (response) {
+            //  //$cordovaFile.writeFile(saveDestination, result.input1 + '.pdf', response.data, true);
+            //  console.log("blablabla");
+            //}, function () {
+            //
+            //});
+            //$http.get('http://www.cypherpunks.to/~peter/06_random.pdf', {responseType: 'arraybuffer'}).then(function (response) {
+            //  $cordovaFile.writeFile(saveDestination, result.input1 + '.pdf', response.data, true);
+            //}, function () {
+            //
+            //});
             // no button = 0, 'OK' = 1, 'Cancel' = 2
-            var btnIndex = result.buttonIndex;
+            //var btnIndex = result.buttonIndex;
           });
 
       };
