@@ -54,11 +54,11 @@ angular.module('symphonia', ['ionic', 'symphonia.controllers', 'symphonia.servic
         templateUrl: 'templates/success.html',
         controller: 'SuccessCtrl'
       })
-      //.state('failure', {
-      //  url: '/failure',
-      //  templateUrl: 'templates/failure.html',
-      //  controller: 'FailureCtrl'
-      //})
+      .state('failure', {
+        url: '/failure',
+        templateUrl: 'templates/failure.html',
+        controller: 'FailureCtrl'
+      })
     ;
 
     $urlRouterProvider.otherwise('/main');
