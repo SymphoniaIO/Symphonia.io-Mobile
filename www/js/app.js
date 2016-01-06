@@ -35,26 +35,31 @@ angular.module('symphonia', ['ionic', 'symphonia.controllers', 'symphonia.servic
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('main', {
+        cache: false,
         url: '/main',
         templateUrl: 'templates/main.html',
         controller: 'MainCtrl'
       })
       .state('options', {
+        cache: false,
         url: '/options',
         templateUrl: 'templates/options.html',
         controller: 'OptionsCtrl'
       })
       .state('about', {
+        cache: false,
         url:'/about',
         templateUrl: 'templates/about.html',
         controller: 'AboutCtrl'
       })
       .state('success', {
+        cache: false,
         url:'/success',
         templateUrl: 'templates/success.html',
         controller: 'SuccessCtrl'
       })
       .state('failure', {
+        cache: false,
         url: '/failure',
         templateUrl: 'templates/failure.html',
         controller: 'FailureCtrl'
