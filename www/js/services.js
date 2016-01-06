@@ -15,6 +15,7 @@
  */
 
 angular.module('symphonia.services', ['ngCordova'])
+  //TODO rewrite all the logging messages using $log service!
   .factory('ImageLoadService', function ($cordovaCamera) {
     var imageFileURI = '';
     var base64Data = '';
@@ -25,6 +26,7 @@ angular.module('symphonia.services', ['ngCordova'])
       var options = {destinationType: Camera.DestinationType.FILE_URI};
       options.sourceType = sourceType;
       $cordovaCamera.getPicture(options).then(function (newURI) {
+        console.log('FILE_URI:' + newURI);
         imageFileURI = newURI;
         window.plugins.Base64.encodeFile(imageFileURI, function (base64Image) {
           base64Data = base64Image;
@@ -59,7 +61,7 @@ angular.module('symphonia.services', ['ngCordova'])
     if ($cordovaDevice.getPlatform() === 'iOS') {
       url = 'http://localhost:8080/api/omr';
     } else if ($cordovaDevice.getPlatform() === 'Android') {
-      url = 'http://192.168.1.5:8080/api/omr';
+      url = 'http://192.168.0.11:8080/api/omr';
     } else {
       return;
     }
@@ -83,43 +85,40 @@ angular.module('symphonia.services', ['ngCordova'])
     }
   })
 
-  .factory('SaveAndSendService', function ($cordovaFile, $cordovaEmailComposer, $cordovaDevice, ImageLoadService) {
+  .factory('SaveAndSendService', function ($log, $cordovaDevice, $cordovaFile, $cordovaEmailComposer) {
     var outputData = '';
     var format = '';
     var tmpName = 'tmpData';
     var cacheFolder = undefined;
+    var savedFileDetails = {
+      path: undefined,
+      name: undefined//WITHOUT EXTENSION!!
+    };
 
-    function clearMess() {
-      //TODO create advanced check, eg. if file has already been saved to dataDirectory, while sending an email, do NOT save it again to cacheDirectory and vice versa
-      //and bind THIS method to cancel button on success screen
-      //maybe, when cancel button was pressed, clear everything
+    function alreadySaved() {
+      console.log('Picking a file \'' + savedFileDetails.name + '.' + format + '\' from \'' + savedFileDetails.path + '\' instead of caching one.');
+      selectAttachment(savedFileDetails.path, savedFileDetails.name);
     }
 
-    function saveTmp() {
-      cacheFolder = cordova.file.cacheDirectory;
-      console.log('Cache DIR: ' + cacheFolder);
-      $cordovaFile.writeFile(cacheFolder, tmpName + '.' + format, outputData, true)
-        .then(function () {
-          console.log('tmpData file saved at: ' + cacheFolder);
-          $cordovaFile.readAsDataURL(cacheFolder, tmpName + '.' + format)
-            .then(function (success) {
-              var data64 = success.split(';base64,').pop();
-              sendMail(data64);
-            }, function (error) {
-              console.log('TMP File NOT read:\n' + error);
-            });
-        }, function () {
+    function selectAttachment(directory, fileName) {
+      console.log('Selecting a file \'' + fileName + '.' + format + '\' from \'' + directory + '\' as an attachment.');
+      $cordovaFile.readAsDataURL(directory, fileName + '.' + format)
+        .then(function (success) {
+          var data64 = success.split(';base64,').pop();
+          openComposer(data64);
+        }, function (error) {
+          console.log('File (\'' + fileName + '.' + format + '\' in \'' + directory + '\') to send NOT read:\n' + error);
         });
     }
 
-    function sendMail(data) {
-      var attachement = 'base64:scores.' + format + '//' + data;
-      console.log('ATTACHEMENT:\n' + attachement);
+    function openComposer(data) {
+      var attachment = 'base64:scores.' + format + '//' + data;
       $cordovaEmailComposer.isAvailable().then(function () {
+        //email available
         var emailDetails = {
           app: 'mailto',
           attachments: [
-            attachement
+            attachment
           ],
           subject: 'Digitized music scores',
           body: 'This email contains file with music scores, that was produced by the <a href="https://www.symphonia.io">SYMPHONIA.IO</a> service.',
@@ -128,34 +127,40 @@ angular.module('symphonia.services', ['ngCordova'])
 
         $cordovaEmailComposer.open(emailDetails).then(function () {
           //TODO show some toast
-          $cordovaFile.removeFile(cacheFolder, tmpName + '.' + format)
-            .then(function (success) {
-              console.log('TMP file successfully deleted!');
-            }, function (error) {
-            });
         }, function () {
           // user cancelled email
         });
-        // is available
       }, function () {
         // not available
       });
     }
 
+    function getCacheDir() {
+      return cordova.file.cacheDirectory;
+    }
+
+    function alreadyInCache(newDestination, newName) {
+      $cordovaFile.moveFile(getCacheDir(), tmpName + '.' + format, newDestination, newName + '.' + format)
+        .then(function () {
+          console.log('TMP file moved from cache to proper storage.');
+          savedFileDetails.path = newDestination;
+          savedFileDetails.name = newName;
+        }, function (error) {
+          console.log('Error while moving file from cache: ' + error);
+        })
+    }
+
     return {
       setOutputDataAndFormat: function (data, dataFormat) {
         outputData = data;
+        cacheFolder = undefined;
+        savedFileDetails.path = undefined;
+        savedFileDetails.name = undefined;
         if (dataFormat == 'musicxml') {
           format = 'xml';
         } else {
           format = 'pdf';
         }
-      },
-      getOutputData: function () {
-        return outputData;
-      },
-      getFormat: function () {
-        return format;
       },
       showButton: function (ifAvailableCallback, ifNotAvailableCallback) {
         $cordovaEmailComposer.isAvailable().then(function () {
@@ -166,25 +171,56 @@ angular.module('symphonia.services', ['ngCordova'])
           ifNotAvailableCallback();
         });
       },
-      sendToEmail: saveTmp,
-      saveData: function (filename) {
-        var saveDestination;
-        if ($cordovaDevice.getPlatform() === 'iOS') {
-          console.log('Platform detected == iOS');
-          saveDestination = cordova.file.dataDirectory;
-        } else if ($cordovaDevice.getPlatform() === 'Android') {
-          console.log('Platform detected == Android');
-          saveDestination = cordova.file.externalDataDirectory;
+      sendToEmail: function() {
+        if (savedFileDetails.path !== undefined) {
+          //file already saved!
+          alreadySaved();
         } else {
-          return;
+          cacheFolder = getCacheDir();
+          console.log('Cache DIR: ' + cacheFolder);
+          $cordovaFile.writeFile(cacheFolder, tmpName + '.' + format, outputData, true)
+            .then(function () {
+              console.log('File \'' + tmpName + '.' + format + '\' saved at: \'' + cacheFolder + '\'.');
+              savedFileDetails.path = cacheFolder;
+              savedFileDetails.name = tmpName;
+              selectAttachment(cacheFolder, tmpName);
+            }, function (error) {
+              console.log('Error while saving file to cache!' + error);
+            });
         }
-        console.log('DEST: ' + saveDestination);
-        $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
-          .then(function (success) {
-            //TODO show where it is saved!
-          }, function (error) {
-            //show something
-          });
+      },
+      saveData: function (filename) {
+        //TODO: check whether an idiotic user did not put there an extension
+        var saveDestination = undefined;
+        switch ($cordovaDevice.getPlatform()) {
+          case 'iOS':
+            console.log('Platform detected == iOS');
+            saveDestination = cordova.file.dataDirectory;
+            break;
+          case 'Android':
+            console.log('Platform detected == Android');
+            saveDestination = cordova.file.externalDataDirectory;
+            break;
+          default:
+            console.log('Not a supported platform!');
+            return;
+        }
+        if (savedFileDetails.path !== undefined) {
+          //already saved in the cache folder
+          console.log('Moving file from cache to \'' + saveDestination + '\'.');
+          alreadyInCache(saveDestination, filename);
+        } else {
+          $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
+            .then(function (success) {
+              //TODO show where it is saved!
+              savedFileDetails.path = saveDestination;
+              savedFileDetails.name = filename;
+              console.log('File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.')
+            }, function (error) {
+              console.log('Error while saving a file:' + error);
+              //show something
+            });
+        }
       }
     }
   });

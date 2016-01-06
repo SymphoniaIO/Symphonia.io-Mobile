@@ -48,6 +48,7 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
         template: '<div class="loader"><svg class="circular">' +
         '<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>' +
         '</svg></div>'
+        //template: '<ion-spinner icon="dots" class="spinner-dark"></ion-spinner>'
       });
 
       ProcessingService.process($scope.data.outputFormat, function () {
@@ -64,7 +65,7 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
 
   })
 
-  .controller('SuccessCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, $cordovaEmailComposer, ImageLoadService, SaveAndSendService) {
+  .controller('SuccessCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, ImageLoadService, SaveAndSendService) {
     $ionicPlatform.ready(function () {
       SaveAndSendService.showButton(function () {
         $scope.emailAvailable = true;
@@ -82,8 +83,6 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
             SaveAndSendService.saveData(result.input1);
           });
       };
-
-      //TODO maybe add a method, that will be invoked when cancell button is pressed instead of using ui-sref
     });
   })
 
