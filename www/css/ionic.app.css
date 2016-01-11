@@ -1,5 +1,20 @@
 @charset "UTF-8";
 /*
+ * Copyright 2016 Maroš Šeleng
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
 To customize the look and feel of Ionic, you can override the variables
 in ionic's _variables.scss file.
 
@@ -6483,29 +6498,29 @@ button.item.item-button-right {
   .card .item:last-child {
     border-bottom: 0; }
 
-.padding .card, .text_about .card, .text_success .card, .padding .list-inset, .text_about .list-inset, .text_success .list-inset {
+.padding .card, .text_about .card, .text_success .card, .text_failure .card, .padding .list-inset, .text_about .list-inset, .text_success .list-inset, .text_failure .list-inset {
   margin-left: 0;
   margin-right: 0; }
 
 .card .item:first-child,
 .list-inset .item:first-child,
-.padding > .list .item:first-child, .text_about > .list .item:first-child, .text_success > .list .item:first-child {
+.padding > .list .item:first-child, .text_about > .list .item:first-child, .text_success > .list .item:first-child, .text_failure > .list .item:first-child {
   border-top-left-radius: 2px;
   border-top-right-radius: 2px; }
   .card .item:first-child .item-content,
   .list-inset .item:first-child .item-content,
-  .padding > .list .item:first-child .item-content, .text_about > .list .item:first-child .item-content, .text_success > .list .item:first-child .item-content {
+  .padding > .list .item:first-child .item-content, .text_about > .list .item:first-child .item-content, .text_success > .list .item:first-child .item-content, .text_failure > .list .item:first-child .item-content {
     border-top-left-radius: 2px;
     border-top-right-radius: 2px; }
 
 .card .item:last-child,
 .list-inset .item:last-child,
-.padding > .list .item:last-child, .text_about > .list .item:last-child, .text_success > .list .item:last-child {
+.padding > .list .item:last-child, .text_about > .list .item:last-child, .text_success > .list .item:last-child, .text_failure > .list .item:last-child {
   border-bottom-right-radius: 2px;
   border-bottom-left-radius: 2px; }
   .card .item:last-child .item-content,
   .list-inset .item:last-child .item-content,
-  .padding > .list .item:last-child .item-content, .text_about > .list .item:last-child .item-content, .text_success > .list .item:last-child .item-content {
+  .padding > .list .item:last-child .item-content, .text_about > .list .item:last-child .item-content, .text_success > .list .item:last-child .item-content, .text_failure > .list .item:last-child .item-content {
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px; }
 
@@ -6515,13 +6530,13 @@ button.item.item-button-right {
 
 .card .item,
 .list-inset .item,
-.padding > .list .item, .text_about > .list .item, .text_success > .list .item,
+.padding > .list .item, .text_about > .list .item, .text_success > .list .item, .text_failure > .list .item,
 .padding-horizontal > .list .item {
   margin-right: 0;
   margin-left: 0; }
   .card .item.item-input input,
   .list-inset .item.item-input input,
-  .padding > .list .item.item-input input, .text_about > .list .item.item-input input, .text_success > .list .item.item-input input,
+  .padding > .list .item.item-input input, .text_about > .list .item.item-input input, .text_success > .list .item.item-input input, .text_failure > .list .item.item-input input,
   .padding-horizontal > .list .item.item-input input {
     padding-right: 44px; }
 
@@ -6732,7 +6747,7 @@ button.item.item-button-right {
     right: 0;
     left: 0; }
 
-.overflow-scroll.padding > .scroll.overscroll, .overflow-scroll.text_about > .scroll.overscroll, .overflow-scroll.text_success > .scroll.overscroll {
+.overflow-scroll.padding > .scroll.overscroll, .overflow-scroll.text_about > .scroll.overscroll, .overflow-scroll.text_success > .scroll.overscroll, .overflow-scroll.text_failure > .scroll.overscroll {
   padding: 10px; }
 
 @-webkit-keyframes refresh-spin {
@@ -8243,7 +8258,7 @@ progress {
       box-shadow: none;
       color: #fff; }
 
-.padding > .button.button-block:first-child, .text_about > .button.button-block:first-child, .text_success > .button.button-block:first-child {
+.padding > .button.button-block:first-child, .text_about > .button.button-block:first-child, .text_success > .button.button-block:first-child, .text_failure > .button.button-block:first-child {
   margin-top: 0; }
 
 .button-block {
@@ -8719,7 +8734,7 @@ a.button {
  * Content Padding
  * --------------------------------------------------
  */
-.padding, .text_about, .text_success {
+.padding, .text_about, .text_success, .text_failure {
   padding: 10px; }
 
 .padding-top,
@@ -9089,6 +9104,21 @@ a.button {
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
 
+/*
+ * Copyright 2016 Maroš Šeleng
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 @font-face {
   font-family: 'ralewaybold';
   src: url("../fonts/raleway/raleway-bold-webfont.eot");
@@ -9119,25 +9149,25 @@ a.button {
 .raleway-bold {
   font-family: 'ralewaybold'; }
 
-.buttons-group_main, .buttons-group_options, .buttons-group_about, .buttons-group_success {
+.buttons-group_main, .buttons-group_options, .buttons-group_about, .buttons-group_success, .buttons-group_failure {
   width: 100%;
   text-align: center;
   position: absolute;
   bottom: 15vh; }
-  .buttons-group_main button, .buttons-group_options button, .buttons-group_about button, .buttons-group_success button {
+  .buttons-group_main button, .buttons-group_options button, .buttons-group_about button, .buttons-group_success button, .buttons-group_failure button {
     position: relative;
     margin: 10px auto;
     display: block !important; }
-    .buttons-group_main button i, .buttons-group_options button i, .buttons-group_about button i, .buttons-group_success button i {
+    .buttons-group_main button i, .buttons-group_options button i, .buttons-group_about button i, .buttons-group_success button i, .buttons-group_failure button i {
       font-family: ralewaybold; }
 
-.title_main, .title_about, .title_success {
+.title_main, .title_about, .title_success, .title_failure {
   font-family: ralewaybold;
   padding-top: 15vh;
   text-align: center;
   font-size: 6vh; }
 
-.text_about, .text_success {
+.text_about, .text_success, .text_failure {
   font-family: ralewaymedium;
   font-size: 3vh;
   line-height: 4vh;
@@ -9203,6 +9233,23 @@ ion-content {
 
 .buttons-group_success i {
   color: #eeeeee; }
+
+.title_failure {
+  color: #eeeeee;
+  position: relative; }
+
+.text_failure {
+  color: #eeeeee; }
+
+.buttons-group_failure i {
+  color: #eeeeee; }
+
+.spinner svg {
+  width: 100px !important;
+  height: 100px !important;
+  stroke: #eeeeee;
+  fill: #eeeeee;
+  zoom: 1.7; }
 
 .walkthrough-element.walkthrough-done-button {
   position: absolute;

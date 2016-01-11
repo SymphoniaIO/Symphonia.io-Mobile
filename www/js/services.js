@@ -15,7 +15,6 @@
  */
 
 angular.module('symphonia.services', ['ngCordova'])
-  //TODO try to use promise system instead of giving a callback as a parameter
   .factory('ImageLoadService', function ($log, $cordovaCamera) {
     var imageFileURI = '';
     var base64Data = '';
@@ -55,6 +54,9 @@ angular.module('symphonia.services', ['ngCordova'])
 
   .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, ImageLoadService, SaveAndSendService) {
     var url = '';
+    var errorMessage = '';
+
+    //TODO with stable symphonia service, remove this workaround
     if ($cordovaDevice.getPlatform() === 'iOS') {
       url = 'http://localhost:8080/api/omr';
     } else if ($cordovaDevice.getPlatform() === 'Android') {
@@ -62,6 +64,7 @@ angular.module('symphonia.services', ['ngCordova'])
     } else {
       return;
     }
+
     return {
       process: function (format, successCallback, failureCallback) {
         var endpoint = url + '/' + format;
@@ -70,14 +73,35 @@ angular.module('symphonia.services', ['ngCordova'])
         options.chunkedMode = false;
         $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageURI(), options)
           .then(function (result) {
-            SaveAndSendService.setOutputDataAndFormat(result.response, format);
-            successCallback();
+            if (result.response.length == 0) {
+              errorMessage = "Provide image with higher resolution.";
+              failureCallback()
+            } else {
+              SaveAndSendService.setOutputDataAndFormat(result.response, format);
+              switch (result.responseCode) {
+                case 500:
+                  errorMessage = "Error processing input image.";
+                  failureCallback();
+                  break;
+                case 204:
+                  errorMessage = "No supported image provided.";
+                  failureCallback();
+                  break;
+                default:
+                  successCallback();
+                  break;
+              }
+            }
             // Success!
           }, function (error) {
             $log.error('Failed to upload a file:\n' + error.code);
+            errorMessage = "Failed to upload a file.\nCheck your internet connection.";
             failureCallback();
             // Error
           });
+      },
+      getErrorMessage: function () {
+        return errorMessage;
       }
     }
   })
@@ -166,7 +190,7 @@ angular.module('symphonia.services', ['ngCordova'])
           ifNotAvailableCallback();
         });
       },
-      sendToEmail: function() {
+      sendToEmail: function () {
         if (savedFileDetails.path !== undefined) {
           //file already saved!
           alreadySaved();

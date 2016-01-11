@@ -13,3 +13,17 @@
 <!--See the License for the specific language governing permissions and-->
 <!--limitations under the License.-->
 
+<ion-content scroll="false" ng-controller="FailureCtrl">
+  <div class="title_failure">
+    FAILURE
+  </div>
+  <div class="padding text_failure">
+    <p>An error has occurred.</p>
+    <p>{{errorMessage}}</p>
+  </div>
+  <div class="buttons-group_failure">
+    <button class="button button-flat" ui-sref="main">
+      <i class="icon-left ion-android-cancel"> BACK</i>
+    </button>
+  </div>
+</ion-content>

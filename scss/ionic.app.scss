@@ -198,6 +198,33 @@ ion-content {
   }
 }
 
+.title_failure {
+  @extend %title_abstract;
+  color: $global_primary-color;
+  position: relative;
+}
+
+.text_failure {
+  @extend %text_abstract;
+  color: $global_primary-color;
+}
+
+.buttons-group_failure {
+  @extend %buttons-group_abstract;
+
+  i {
+    color: $global_primary-color;
+  }
+}
+
+.spinner svg {
+  width: 100px !important;
+  height: 100px !important;
+  stroke: $global_primary-color;
+  fill: $global_primary-color;
+  zoom: 1.7;
+}
+
 //WALKTHROUGH OVERRIDES HERE
 .walkthrough-element.walkthrough-done-button {
   position: absolute;

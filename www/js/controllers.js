@@ -32,11 +32,14 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
     });
   })
 
-  .controller('OptionsCtrl', function ($scope, $ionicLoading, $state, ImageLoadService, ProcessingService) {
+  .controller('OptionsCtrl', function ($scope, $ionicLoading, $state, $cordovaDevice, ImageLoadService, ProcessingService) {
     $scope.outputFormatList = [
       {text: 'Music XML', value: 'musicxml'},
       {text: 'PDF', value: 'pdf'}
     ];
+
+    //Prevents image from overlaying the statusbar on iOS devices
+    $scope.imageDivMarginTop = $cordovaDevice.getPlatform() === 'iOS' ? '20px' : '0px';
 
     $scope.data = {
       outputFormat: 'musicxml',
@@ -44,20 +47,23 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
     };
 
     $scope.processOmr = function () {
+      //TODO make prettier loading spinner
       $ionicLoading.show({
-        template: '<div class="loader"><svg class="circular">' +
-        '<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>' +
-        '</svg></div>'
-        //template: '<ion-spinner icon="dots" class="spinner-dark"></ion-spinner>'
+        //template: '<div class="loader"><svg class="circular">' +
+        //'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>' +
+        //'</svg></div>',
+        hideOnStateChange: true,
+        noBackdrop: true,
+        template: '<ion-spinner icon="ripple"></ion-spinner>'
       });
 
-      ProcessingService.process($scope.data.outputFormat, function () {
-        $ionicLoading.hide();
-        $state.go('success');
-      }, function () {
-        $ionicLoading.hide();
-        $state.go('failure');
-      });
+      //ProcessingService.process($scope.data.outputFormat, function () {
+      //  $ionicLoading.hide();
+      //  $state.go('success');
+      //}, function () {
+      //  $ionicLoading.hide();
+      //  $state.go('failure');
+      //});
     };
   })
 
@@ -86,6 +92,6 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
     });
   })
 
-  .controller('FailureCtrl', function () {
-
+  .controller('FailureCtrl', function ($scope, ProcessingService) {
+    $scope.errorMessage = ProcessingService.getErrorMessage();
   });
