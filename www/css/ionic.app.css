@@ -9182,12 +9182,14 @@ ion-content {
   background: url("../img/banner.jpg") no-repeat center center fixed;
   background-size: cover; }
 
+/**  MAIN SCREEN  **/
 .title_main {
   color: #eeeeee; }
 
 .buttons-group_main i {
   color: #453d36; }
 
+/**  OPTIONS SCREEN  **/
 .image-thumbnail_options {
   overflow: hidden;
   position: relative;
@@ -9214,6 +9216,7 @@ ion-content {
 .checkbox-label_options p {
   color: #eeeeee; }
 
+/**  ABOUT SCREEN  **/
 .title_about {
   color: #eeeeee;
   position: relative; }
@@ -9224,6 +9227,7 @@ ion-content {
 .buttons-group_about i {
   color: #eeeeee; }
 
+/**  SUCCESS SCREEN  **/
 .title_success {
   color: #eeeeee;
   position: relative; }
@@ -9234,6 +9238,7 @@ ion-content {
 .buttons-group_success i {
   color: #eeeeee; }
 
+/**  FAILURE SCREEN  **/
 .title_failure {
   color: #eeeeee;
   position: relative; }
@@ -9247,8 +9252,8 @@ ion-content {
 .spinner svg {
   width: 100px !important;
   height: 100px !important;
-  stroke: #eeeeee;
-  fill: #eeeeee;
+  stroke: #3b3733;
+  fill: #453d36;
   zoom: 1.7; }
 
 .walkthrough-element.walkthrough-done-button {

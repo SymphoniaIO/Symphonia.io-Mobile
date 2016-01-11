@@ -102,11 +102,13 @@ ion-content {
   background-color: $global_secondary-color !important;
 }
 
+//IMAGE BACKGROUND
 .banner-background {
   background: url($global_banner-img) no-repeat center center fixed;
   background-size: cover;
 }
 
+/**  MAIN SCREEN  **/
 .title_main {
   @extend %title_abstract;
   color: $global_primary-color;
@@ -120,6 +122,7 @@ ion-content {
   }
 }
 
+/**  OPTIONS SCREEN  **/
 .image-thumbnail_options {
   overflow: hidden;
   position: relative;
@@ -160,6 +163,7 @@ ion-content {
   }
 }
 
+/**  ABOUT SCREEN  **/
 .title_about {
   @extend %title_abstract;
   color: $global_primary-color;
@@ -179,6 +183,7 @@ ion-content {
   }
 }
 
+/**  SUCCESS SCREEN  **/
 .title_success {
   @extend %title_abstract;
   color: $global_primary-color;
@@ -198,6 +203,7 @@ ion-content {
   }
 }
 
+/**  FAILURE SCREEN  **/
 .title_failure {
   @extend %title_abstract;
   color: $global_primary-color;
@@ -217,15 +223,16 @@ ion-content {
   }
 }
 
+//SPINNER STYLING
 .spinner svg {
   width: 100px !important;
   height: 100px !important;
-  stroke: $global_primary-color;
-  fill: $global_primary-color;
+  stroke: $global_secondary-dark;
+  fill: $global_secondary-color;
   zoom: 1.7;
 }
 
-//WALKTHROUGH OVERRIDES HERE
+//WALKTHROUGH OVERRIDES
 .walkthrough-element.walkthrough-done-button {
   position: absolute;
   bottom: 30px;

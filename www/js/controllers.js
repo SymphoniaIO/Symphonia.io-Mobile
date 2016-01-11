@@ -47,7 +47,6 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
     };
 
     $scope.processOmr = function () {
-      //TODO make prettier loading spinner
       $ionicLoading.show({
         //template: '<div class="loader"><svg class="circular">' +
         //'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>' +
@@ -57,13 +56,13 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
         template: '<ion-spinner icon="ripple"></ion-spinner>'
       });
 
-      //ProcessingService.process($scope.data.outputFormat, function () {
-      //  $ionicLoading.hide();
-      //  $state.go('success');
-      //}, function () {
-      //  $ionicLoading.hide();
-      //  $state.go('failure');
-      //});
+      ProcessingService.process($scope.data.outputFormat, function () {
+        $ionicLoading.hide();
+        $state.go('success');
+      }, function () {
+        $ionicLoading.hide();
+        $state.go('failure');
+      });
     };
   })
 
