@@ -53,7 +53,7 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
         //'</svg></div>',
         hideOnStateChange: true,
         noBackdrop: true,
-        template: '<ion-spinner icon="ripple"></ion-spinner>'
+        template: '<ion-spinner icon="circles"></ion-spinner>'
       });
 
       ProcessingService.process($scope.data.outputFormat, function () {

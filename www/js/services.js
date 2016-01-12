@@ -53,17 +53,9 @@ angular.module('symphonia.services', ['ngCordova'])
   })
 
   .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, ImageLoadService, SaveAndSendService) {
-    var url = '';
-    var errorMessage = '';
-
     //TODO with stable symphonia service, remove this workaround
-    if ($cordovaDevice.getPlatform() === 'iOS') {
-      url = 'http://localhost:8080/api/omr';
-    } else if ($cordovaDevice.getPlatform() === 'Android') {
-      url = 'http://192.168.0.11:8080/api/omr';
-    } else {
-      return;
-    }
+    var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.11:8080/api/omr';
+    var errorMessage = '';
 
     return {
       process: function (format, successCallback, failureCallback) {
@@ -177,11 +169,7 @@ angular.module('symphonia.services', ['ngCordova'])
         cacheFolder = undefined;
         savedFileDetails.path = undefined;
         savedFileDetails.name = undefined;
-        if (dataFormat == 'musicxml') {
-          format = 'xml';
-        } else {
-          format = 'pdf';
-        }
+        format = dataFormat == 'musicxml' ? 'xml' : 'pdf';
       },
       showButton: function (ifAvailableCallback, ifNotAvailableCallback) {
         $cordovaEmailComposer.isAvailable().then(function () {
@@ -208,20 +196,9 @@ angular.module('symphonia.services', ['ngCordova'])
         }
       },
       saveData: function (filename) {
-        //TODO: check whether an idiotic user did not put there an extension
-        var saveDestination = undefined;
-        switch ($cordovaDevice.getPlatform()) {
-          case 'iOS':
-            saveDestination = cordova.file.dataDirectory;
-            break;
-          case 'Android':
-            saveDestination = cordova.file.externalDataDirectory;
-            break;
-          default:
-            $log.debug('Not a supported platform!');
-            return;
-        }
-        if (savedFileDetails.path !== undefined) {
+        //TODO: check whether an user did not put there an extension
+        var saveDestination = $cordovaDevice.getPlatform() === 'iOS' ? cordova.file.dataDirectory : cordova.file.externalDataDirectory;
+        if (savedFileDetails.path !== undefined && savedFileDetails.path === getCacheDir()) {
           //already saved in the cache folder
           alreadyInCache(saveDestination, filename);
         } else {
