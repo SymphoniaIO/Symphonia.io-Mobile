@@ -38,64 +38,8 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 @import "raleway";
-
-// VARIABLES
-$global_banner-img: '../img/banner.jpg';
-$global_primary-color: #eeeeee;
-$global_secondary-color: #453d36;
-$global_secondary-dark: #3b3733;
-$global_button-font-size: 180%;
-$global_button-margin: 10px auto;
-$global_buttons-block-width: 100%;
-$global_text-font-size: 3vh;
-$global_text-line-height: 4vh;
-$global_text-margin-top: 6vh;
-$global_padding-top-title: 15vh;
-$global_title-font-size: 6vh;
-
-$main_my-buttons-bottom: $global_padding-top-title;
-
-$options_buttons-block-margin-top: 60px;
-$options_buttons-block-bottom: 0;
-$options_image-padding: 20px;
-$options_output-format-checkbox-margin-top: 20px;
-$options_output-format-checkbox-label-padding-left: 16px;
-$options_output-format-checkbox-p-text-size: 150%;
-
-//ABSTRACT CLASSES
-%buttons-group_abstract {
-  width: $global_buttons-block-width;
-  text-align: center;
-  position: absolute;
-  bottom: $main_my-buttons-bottom;
-
-  button {
-    position: relative;
-    margin: $global_button-margin;
-    display: block !important;
-
-    i {
-      font-family: ralewaybold;
-    }
-  }
-}
-
-%title_abstract {
-  font-family: ralewaybold;
-  padding-top: $global_padding-top-title;
-  text-align: center;
-  font-size: $global_title-font-size;
-}
-
-%text_abstract {
-  @extend .padding;
-  font-family: ralewaymedium;
-  font-size: $global_text-font-size;
-  line-height: $global_text-line-height;
-  text-align: center;
-  position: relative;
-  margin-top: $global_text-margin-top;
-}
+@import "variables";
+@import "abstractClasses";
 
 //DEFAULT BACKGROUND
 ion-content {

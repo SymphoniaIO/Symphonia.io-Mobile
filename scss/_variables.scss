@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+/*
+ * Copyright 2016 Maroš Šeleng
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// VARIABLES
+$global_banner-img: '../img/banner.jpg';
+$global_primary-color: #eeeeee;
+$global_secondary-color: #453d36;
+$global_secondary-dark: #3b3733;
+$global_button-font-size: 180%;
+$global_button-margin: 10px auto;
+$global_buttons-block-width: 100%;
+$global_text-font-size: 3vh;
+$global_text-line-height: 4vh;
+$global_text-margin-top: 6vh;
+$global_padding-top-title: 15vh;
+$global_title-font-size: 6vh;
+
+$main_my-buttons-bottom: $global_padding-top-title;
+
+$options_buttons-block-margin-top: 60px;
+$options_buttons-block-bottom: 0;
+$options_image-padding: 20px;
+$options_output-format-checkbox-margin-top: 20px;
+$options_output-format-checkbox-label-padding-left: 16px;
+$options_output-format-checkbox-p-text-size: 150%;
