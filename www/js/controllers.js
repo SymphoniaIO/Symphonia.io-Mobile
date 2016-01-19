@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
+angular.module('symphonia.controllers', ['ngCordova'])
 
   .controller('MainCtrl', function ($scope, $ionicPlatform, $state, ImageLoadService) {
     $ionicPlatform.ready(function () {
@@ -48,9 +48,6 @@ angular.module('symphonia.controllers', ['ngCordova', 'ng-walkthrough'])
 
     $scope.processOmr = function () {
       $ionicLoading.show({
-        //template: '<div class="loader"><svg class="circular">' +
-        //'<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>' +
-        //'</svg></div>',
         hideOnStateChange: true,
         noBackdrop: true,
         template: '<ion-spinner icon="circles"></ion-spinner>'

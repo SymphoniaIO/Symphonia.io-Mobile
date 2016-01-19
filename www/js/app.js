@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+//TODO: CONSIDER REMOVING IONIC-MATERIAL (SOMEHOW HACK BUTTON_FLAT)
 angular.module('symphonia', ['ionic', 'symphonia.controllers', 'symphonia.services'])
 
   .run(function ($ionicPlatform) {
