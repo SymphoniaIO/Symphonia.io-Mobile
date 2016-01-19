@@ -5,6 +5,7 @@ node_modules/
 platforms/
 plugins/
 .idea/
+www/lib/
 
 *.iml
 .DS_STORE
