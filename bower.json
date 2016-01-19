@@ -1,9 +1,32 @@
 {
   "name": "Symphonia.io",
-  "private": "true",
+  "private": true,
   "devDependencies": {
     "ionic": "driftyco/ionic-bower#1.1.1"
   },
   "dependencies": {
-  }
+    "angular-animate": "1.4.3",
+    "angular-sanitize": "1.4.3",
+    "angular-ui-router": "0.2.13",
+    "ionic-material": "~0.4.2",
+    "ngCordova": "~0.1.23-alpha"
+  },
+  "homepage": "https://github.com/SymphoniaIO/Symphonia.io-Mobile",
+  "authors": [
+    "Maroš Šeleng <marosseleng@gmail.com>"
+  ],
+  "description": "Mobile app for the symphonia.io service.",
+  "main": "",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "Apache License, Version 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "www/lib",
+    "test",
+    "tests"
+  ]
 }

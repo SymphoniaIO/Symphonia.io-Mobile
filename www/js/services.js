@@ -54,7 +54,8 @@ angular.module('symphonia.services', ['ngCordova'])
 
   .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, ImageLoadService, SaveAndSendService) {
     //TODO with stable symphonia service, remove this workaround
-    var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.11:8080/api/omr';
+    //var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.1.3:8080/api/omr';
+    var url = 'http://46.101.224.141:8080/api/omr';
     var errorMessage = '';
 
     return {
@@ -65,7 +66,7 @@ angular.module('symphonia.services', ['ngCordova'])
         options.chunkedMode = false;
         $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageURI(), options)
           .then(function (result) {
-            if (result.response.length == 0) {
+            if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
               errorMessage = "Provide image with higher resolution.";
               failureCallback()
             } else {
