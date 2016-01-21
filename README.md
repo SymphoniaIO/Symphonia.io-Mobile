@@ -28,10 +28,12 @@ It is **recommended** to install in this order!
 * ionic and cordova CLIs
   * `npm install -g cordova ionis`
 
-
-
 ### Installation
-1. Clone this repository.
-2. `cd` into root folder.
-3. `bower install`
-4. `ionic state restore`
+1. `git clone` this repository.
+2. `cd` into the root folder.
+3. `bower install` to install libraries (from the `/bower.json` file).
+4. `ionic state restore` to install plugins and platforms (from the `/package.json` file). 
+  Note that if you are not on the Mac OS, **remove** `"iOS"` from `"cordovaPlatforms"`!
+5. `ionic build` which builds app for both of platforms
+6. `ionic run android` || `ionic emulate android` || `ionic emulate ios`.
+7. Enjoy!
