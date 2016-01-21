@@ -14,6 +14,21 @@ The application was made using the hybrid framework (ionic), targeting Android a
 Original assignment can be found [here](https://diplomky.redhat.com/topic/show/348/mobile-application-for-symphoniaio).
 
 ### Prerequisites
+It is **recommended** to install in this order!
+
+* [Node.js 4](http://nodejs.org)
+* cordova and ionic CLI tools
+  * `npm install -g ionic cordova`
+* bower package manager
+  * `npm install -g bower`
+* gulp
+  * `npm install -g gulp`
+* ios-sim (only if you are on Mac):
+  * `npm install -g ion-sim`
+* ionic and cordova CLIs
+  * `npm install -g cordova ionis`
+
+
 
 ### Installation
 1. Clone this repository.
