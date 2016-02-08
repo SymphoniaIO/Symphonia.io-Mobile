@@ -53,7 +53,7 @@ angular.module('symphonia.services', ['ngCordova'])
     };
   })
 
-  .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, ImageLoadService, SaveAndSendService) {
+  .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
     //TODO with stable symphonia service, remove this workaround
     var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.12:8080/api/omr';
     //var url = 'http://46.101.224.141:8080/api/omr';
@@ -94,6 +94,16 @@ angular.module('symphonia.services', ['ngCordova'])
             failureCallback();
             // Error
           });
+
+        /*var pdfUrl = 'http://au.mathworks.com/moler/random.pdf'
+
+        $cordovaFileTransfer.download(pdfUrl,cordova.file.cacheDirectory + 'random.pdf',{},true).then(function() {
+          $cordovaToast.showLongBottom('FILE SAVED TO: ' + cordova.file.cacheDirectory + 'random.pdf');
+          successCallback();
+        }, function() {
+          $cordovaToast.showLongBottom('FILE NOT SAVED!!');
+
+        });*/
       },
       getErrorMessage: function () {
         return errorMessage;
@@ -108,7 +118,7 @@ angular.module('symphonia.services', ['ngCordova'])
     var cacheFolder = undefined;
     var savedFileDetails = {
       path: undefined,
-      name: undefined//WITHOUT EXTENSION!!
+      name: undefined // WITHOUT EXTENSION!!
     };
 
     function alreadySaved() {
@@ -143,10 +153,9 @@ angular.module('symphonia.services', ['ngCordova'])
 
         $cordovaEmailComposer.open(emailDetails).then(function () {
           $cordovaToast.showShortBottom('Email sent.');
-          //TODO show some toast
         }, function () {
-          $cordovaToast.showShortBottom('Email not sent.');
           // user cancelled email
+          $cordovaToast.showShortBottom('Email not sent.');
         });
       }, function () {
         // not available
@@ -157,9 +166,10 @@ angular.module('symphonia.services', ['ngCordova'])
       return cordova.file.cacheDirectory;
     }
 
-    function alreadyInCache(newDestination, newName) {
+    function alreadyInCache(newDestination, newName, didSaveCallback) {
       $cordovaFile.moveFile(getCacheDir(), tmpName + '.' + format, newDestination, newName + '.' + format)
         .then(function () {
+          didSaveCallback();
           $log.info('File \'' + tmpName + '.' + format + '\' moved from cache and saved to \'' + newDestination + '\' as \'' + newName + '.' + format + '\'.');
           savedFileDetails.path = newDestination;
           savedFileDetails.name = newName;
@@ -201,14 +211,15 @@ angular.module('symphonia.services', ['ngCordova'])
             });
         }
       },
-      saveData: function (filename) {
+      saveData: function (filename, didSaveCallback) {
         var saveDestination = $cordovaDevice.getPlatform() === 'iOS' ? cordova.file.dataDirectory : cordova.file.externalDataDirectory;
         if (savedFileDetails.path !== undefined && savedFileDetails.path === getCacheDir()) {
           //already saved in the cache folder
-          alreadyInCache(saveDestination, filename);
+          alreadyInCache(saveDestination, filename, didSaveCallback);
         } else {
           $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
             .then(function (success) {
+              didSaveCallback();
               savedFileDetails.path = saveDestination;
               savedFileDetails.name = filename;
               var message = 'File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.';

@@ -75,16 +75,30 @@ angular.module('symphonia.controllers', ['ngCordova'])
         $scope.emailAvailable = false;
       });
 
+      $scope.resultSaved = false;
+
       $scope.sendEmail = function () {
         SaveAndSendService.sendToEmail();
       };
 
-      $scope.downloadWatImage = function () {
+      $scope.saveImage = function () {
         $cordovaDialogs.prompt('Enter the name of a file, WITHOUT suffix', 'Filename', ['Cancel', 'Save'], 'scores')
           .then(function (result) {
-            SaveAndSendService.saveData(result.input1);
+            switch (result.buttonIndex) {
+              case 2:
+                SaveAndSendService.saveData(result.input1, function () {
+                  $scope.resultSaved = true;
+                });
+                break;
+              default:
+                break;
+            }
           });
       };
+
+      $scope.openInExternal = function () {
+
+      }
     });
   })
 

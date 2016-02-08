@@ -27,8 +27,11 @@
     <button class="button button-flat" ng-click="sendEmail()" ng-show="emailAvailable">
       <i class="icon-left ion-paper-airplane"> SHARE VIA EMAIL</i>
     </button>
-    <button class="button button-flat" ng-click="downloadWatImage()">
+    <button class="button button-flat" ng-click="saveImage()">
       <i class="icon-left ion-android-download"> SAVE</i>
+    </button>
+    <button class="button button-flat" ng-click="openInExternal()" ng-show="resultSaved">
+      <i class="icon-left ion-android-open"> OPEN</i>
     </button>
     <button class="button button-flat" ui-sref="main">
       <i class="icon-left ion-android-cancel"> CANCEL</i>
