@@ -21,10 +21,12 @@
     "cordova-plugin-device",
     "cordova-plugin-dialogs",
     "cordova-plugin-file",
+    "cordova-plugin-fileopener2",
     "cordova-plugin-file-transfer",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "cordova-plugin-whitelist",
+    "cordova-plugin-x-toast",
     "de.appplant.cordova.plugin.email-composer",
     "ionic-plugin-keyboard"
   ],

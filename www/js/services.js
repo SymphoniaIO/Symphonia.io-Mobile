@@ -20,6 +20,7 @@ angular.module('symphonia.services', ['ngCordova'])
     var base64Data = '';
 
     function savePicture(sourceType, callback) {
+      //TODO we need more details!!!
       var options = {destinationType: Camera.DestinationType.FILE_URI};
       options.sourceType = sourceType;
       $cordovaCamera.getPicture(options).then(function (newURI) {
@@ -54,8 +55,8 @@ angular.module('symphonia.services', ['ngCordova'])
 
   .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, ImageLoadService, SaveAndSendService) {
     //TODO with stable symphonia service, remove this workaround
-    //var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.1.3:8080/api/omr';
-    var url = 'http://46.101.224.141:8080/api/omr';
+    var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.12:8080/api/omr';
+    //var url = 'http://46.101.224.141:8080/api/omr';
     var errorMessage = '';
 
     return {
@@ -64,6 +65,7 @@ angular.module('symphonia.services', ['ngCordova'])
         var options = new FileUploadOptions();
         options.fileKey = 'attachment';
         options.chunkedMode = false;
+        //TODO maybe try different framework/plugin or do something to fix this
         $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageURI(), options)
           .then(function (result) {
             if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
@@ -99,7 +101,7 @@ angular.module('symphonia.services', ['ngCordova'])
     }
   })
 
-  .factory('SaveAndSendService', function ($log, $cordovaDevice, $cordovaFile, $cordovaEmailComposer) {
+  .factory('SaveAndSendService', function ($log, $cordovaDevice, $cordovaFile, $cordovaEmailComposer, $cordovaToast) {
     var outputData = '';
     var format = '';
     var tmpName = 'tmpData';
@@ -140,8 +142,10 @@ angular.module('symphonia.services', ['ngCordova'])
         };
 
         $cordovaEmailComposer.open(emailDetails).then(function () {
+          $cordovaToast.showShortBottom('Email sent.');
           //TODO show some toast
         }, function () {
+          $cordovaToast.showShortBottom('Email not sent.');
           // user cancelled email
         });
       }, function () {
@@ -159,6 +163,7 @@ angular.module('symphonia.services', ['ngCordova'])
           $log.info('File \'' + tmpName + '.' + format + '\' moved from cache and saved to \'' + newDestination + '\' as \'' + newName + '.' + format + '\'.');
           savedFileDetails.path = newDestination;
           savedFileDetails.name = newName;
+          $cordovaToast.showShortBottom('File \'' + newName + '.' + format + '\' saved to \'' + newDestination + '\'.')
         }, function (error) {
           $log.error('Failed to move file from cache to storage: ' + error);
         })
@@ -197,7 +202,6 @@ angular.module('symphonia.services', ['ngCordova'])
         }
       },
       saveData: function (filename) {
-        //TODO: check whether an user did not put there an extension
         var saveDestination = $cordovaDevice.getPlatform() === 'iOS' ? cordova.file.dataDirectory : cordova.file.externalDataDirectory;
         if (savedFileDetails.path !== undefined && savedFileDetails.path === getCacheDir()) {
           //already saved in the cache folder
@@ -205,13 +209,15 @@ angular.module('symphonia.services', ['ngCordova'])
         } else {
           $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
             .then(function (success) {
-              //TODO show where it is saved!
               savedFileDetails.path = saveDestination;
               savedFileDetails.name = filename;
-              $log.info('File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.')
+              var message = 'File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.';
+              $cordovaToast.showShortBottom(message);
+              $log.info(message)
             }, function (error) {
-              $log.error('Failed to save a file:' + error);
-              //show something
+              var message = 'Failed to save the file';
+              $log.error(message + '\n' + error);
+              $cordovaToast.showShortBottom(message);
             });
         }
       }
