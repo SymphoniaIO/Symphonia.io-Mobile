@@ -18,7 +18,7 @@ angular.module('symphonia.controllers')
       };
     });
 
-    function showErrorDialog() {
-      $cordovaDialogs.alert('The type of a file you provided is not supported.', 'Error')
+    function showErrorDialog(message) {
+      $cordovaDialogs.alert(message, 'An error has occurred')
     }
   });

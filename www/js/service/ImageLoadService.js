@@ -25,7 +25,7 @@ angular.module('symphonia.services')
         var extension = filenameWithExtension.substr(filenameWithExtension.lastIndexOf('.') + 1);
 
         if (!isFileSupported(extension)) {
-          failureCallback();
+          failureCallback('File type not supported!');
           return;
         }
 
@@ -36,14 +36,15 @@ angular.module('symphonia.services')
           successCallback();
         }, function (error) {
           $log.error('Failed to convert to base64: ' + error);
+          failureCallback('Error while processing a picture.');
         });
       }, function (error) {
         $log.error('Failed to pick a photo: ' + error);
+        failureCallback('Error while processing a picture.')
       });
     }
 
     function isFileSupported(extension) {
-      $log.debug(extension);
       switch (extension) {
         case 'bmp':
           mime = 'image/bmp';
