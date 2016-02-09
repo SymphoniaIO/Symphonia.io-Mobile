@@ -16,20 +16,24 @@
 
 angular.module('symphonia.controllers', ['ngCordova'])
 
-  .controller('MainCtrl', function ($scope, $ionicPlatform, $state, ImageLoadService) {
+  .controller('MainCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, $state, ImageLoadService) {
     $ionicPlatform.ready(function () {
       $scope.uploadPicture = function () {
         ImageLoadService.upload(function () {
           $state.go('options');
-        });
+        }, showErrorDialog);
       };
 
       $scope.takeAPicture = function () {
         ImageLoadService.take(function () {
           $state.go('options');
-        });
+        }, showErrorDialog);
       };
     });
+
+    function showErrorDialog() {
+      $cordovaDialogs.alert('The type of a file you provided is not supported.','Error')
+    }
   })
 
   .controller('OptionsCtrl', function ($scope, $ionicLoading, $state, $cordovaDevice, ImageLoadService, ProcessingService) {

@@ -17,38 +17,88 @@
 angular.module('symphonia.services', ['ngCordova'])
   .factory('ImageLoadService', function ($log, $cordovaCamera) {
     var imageFileURI = '';
+    var filenameWithExtension = '';
     var base64Data = '';
+    var mime = 'image/*';
 
-    function savePicture(sourceType, callback) {
-      //TODO we need more details!!!
-      var options = {destinationType: Camera.DestinationType.FILE_URI};
+    function savePicture(sourceType, successCallback, failureCallback) {
+
+      var options = {
+        destinationType: Camera.DestinationType.FILE_URI,
+        saveToPhotoAlbum: true,
+        mediaType: Camera.MediaType.PICTURE
+      };
       options.sourceType = sourceType;
+
       $cordovaCamera.getPicture(options).then(function (newURI) {
+
+        var filenameAndExtension = newURI.substr(newURI.lastIndexOf('/') + 1);
+        filenameWithExtension = filenameAndExtension.lastIndexOf('.') < 0 ? "wildcard.jpg" : filenameAndExtension;
+        var extension = filenameWithExtension.substr(filenameAndExtension.lastIndexOf('.') + 1);
+
+        if (!isFileSupported(extension)) {
+          failureCallback();
+          return;
+        }
+
         imageFileURI = newURI;
+
         window.plugins.Base64.encodeFile(imageFileURI, function (base64Image) {
           base64Data = base64Image;
-          callback();
+          successCallback();
         }, function (error) {
           $log.error('Failed to convert to base64: ' + error);
-          callback();
+          failureCallback();
         });
       }, function (error) {
         $log.error('Failed to pick a photo: ' + error);
       });
     }
 
+    function isFileSupported(extension) {
+      $log.debug(extension);
+      switch (extension) {
+        case 'bmp':
+          mime = 'image/bmp';
+          return true;
+        case 'gif':
+          mime = 'image/gif';
+          return true;
+        case 'jpeg':
+          mime = 'image/jpeg';
+          return true;
+        case 'jpg':
+          mime = 'image/jpeg';
+          return true;
+        case 'png':
+          mime = 'image/png';
+          return true;
+        case 'tiff':
+          mime = 'image/tiff';
+          return true;
+        default:
+          return false;
+      }
+    }
+
     return {
-      upload: function (callback) {
-        savePicture(Camera.PictureSourceType.PHOTOLIBRARY, callback)
+      upload: function (successCallback, failureCallback) {
+        savePicture(Camera.PictureSourceType.PHOTOLIBRARY, successCallback, failureCallback)
       },
-      take: function (callback) {
-        savePicture(Camera.PictureSourceType.CAMERA, callback);
+      take: function (successCallback, failureCallback) {
+        savePicture(Camera.PictureSourceType.CAMERA, successCallback, failureCallback);
       },
       getImageURI: function () {
         return imageFileURI;
       },
       getBase64: function () {
         return base64Data;
+      },
+      getFilenameWithExtension: function () {
+        return filenameWithExtension;
+      },
+      getMime: function () {
+        return mime;
       }
     };
   })
@@ -65,7 +115,10 @@ angular.module('symphonia.services', ['ngCordova'])
         var options = new FileUploadOptions();
         options.fileKey = 'attachment';
         options.chunkedMode = false;
-        //TODO maybe try different framework/plugin or do something to fix this
+        options.fileName = ImageLoadService.getFilenameWithExtension();
+        options.mimeType = ImageLoadService.getMime();
+
+        //TODO maybe try different framework/plugin or do something to fix thiSHAREs
         $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageURI(), options)
           .then(function (result) {
             if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
@@ -94,16 +147,6 @@ angular.module('symphonia.services', ['ngCordova'])
             failureCallback();
             // Error
           });
-
-        /*var pdfUrl = 'http://au.mathworks.com/moler/random.pdf'
-
-        $cordovaFileTransfer.download(pdfUrl,cordova.file.cacheDirectory + 'random.pdf',{},true).then(function() {
-          $cordovaToast.showLongBottom('FILE SAVED TO: ' + cordova.file.cacheDirectory + 'random.pdf');
-          successCallback();
-        }, function() {
-          $cordovaToast.showLongBottom('FILE NOT SAVED!!');
-
-        });*/
       },
       getErrorMessage: function () {
         return errorMessage;
