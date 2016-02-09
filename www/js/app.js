@@ -69,3 +69,6 @@ angular.module('symphonia', ['ionic', 'symphonia.controllers', 'symphonia.servic
 
     $urlRouterProvider.otherwise('/main');
   });
+
+angular.module('symphonia.services', ['ngCordova']);
+angular.module('symphonia.controllers', ['ngCordova']);
