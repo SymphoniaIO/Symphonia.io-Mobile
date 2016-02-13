@@ -32,7 +32,7 @@ angular.module('symphonia.services')
       options.mimeType = ImageLoadService.getMime();
 
       // TODO maybe try different framework/plugin or do something to fix this
-      $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageURI(), options)
+      $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageUri(), options)
         .then(function (result) {
           if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
             errorMessage = "Provide image with higher resolution.";

@@ -15,8 +15,8 @@
  */
 
 angular.module('symphonia.services')
-  .factory('ImageLoadService', function ($log, $cordovaCamera) {
-    var imageFileURI = '';
+  .factory('ImageLoadService', function ($log, $cordovaCamera, $cordovaDevice) {
+    var imageFileUri = '';
     var filenameWithExtension = '';
     var base64Data = '';
     var mime = 'image/*';
@@ -26,34 +26,50 @@ angular.module('symphonia.services')
       var options = {
         destinationType: Camera.DestinationType.FILE_URI,
         saveToPhotoAlbum: true,
-        mediaType: Camera.MediaType.PICTURE
+        mediaType: Camera.MediaType.PICTURE,
+        sourceType: sourceType
       };
-      options.sourceType = sourceType;
 
-      $cordovaCamera.getPicture(options).then(function (newURI) {
-
-        var filenameAndExtension = newURI.substr(newURI.lastIndexOf('/') + 1);
-        filenameWithExtension = filenameAndExtension.lastIndexOf('.') < 0 ? "wildcard.jpg" : filenameAndExtension;
-        var extension = filenameWithExtension.substr(filenameWithExtension.lastIndexOf('.') + 1);
-
-        if (!isFileSupported(extension)) {
-          failureCallback('File type not supported!');
-          return;
+      $cordovaCamera.getPicture(options).then(function (newUri) {
+        switch ($cordovaDevice.getPlatform()) {
+          case 'iOS':
+            isIos(newUri, successCallback, failureCallback);
+            break;
+          case 'Android':
+            isAndroid(newUri, successCallback, failureCallback);
+            break;
+          default:
+            return;
         }
-
-        imageFileURI = newURI;
-
-        window.plugins.Base64.encodeFile(imageFileURI, function (base64Image) {
-          base64Data = base64Image;
-          successCallback();
-        }, function (error) {
-          $log.error('Failed to convert to base64: ' + error);
-          failureCallback('Error while processing a picture.');
-        });
       }, function (error) {
         $log.error('Failed to pick a photo: ' + error);
         failureCallback('Error while processing a picture.')
       });
+    }
+
+    function isIos(uri, successCallback, failureCallback) {
+      setFieldsAndData(uri, successCallback, failureCallback);
+    }
+
+    function isAndroid(uri, successCallback, failureCallback) {
+      window.FilePath.resolveNativePath(uri, function (correctUri) {
+        setFieldsAndData(correctUri, successCallback, failureCallback);
+      }, function (error) {
+        $log.error('Failed to get the correct FILE_URI: ' + error);
+        failureCallback('Error while processing a picture.');
+      });
+    }
+
+    function setFieldsAndData(uri, successCallback, failureCallback) {
+      filenameWithExtension = uri.substr(uri.lastIndexOf('/') + 1);
+      var extension = filenameWithExtension.substr(filenameWithExtension.lastIndexOf('.') + 1);
+
+      if (!isFileSupported(extension)) {
+        failureCallback('File type not supported!');
+      } else {
+        imageFileUri = uri;
+        toBase64(imageFileUri, successCallback, failureCallback);
+      }
     }
 
     function isFileSupported(extension) {
@@ -81,6 +97,32 @@ angular.module('symphonia.services')
       }
     }
 
+    function toBase64(uri, successCallback, failureCallback) {
+      window.plugins.Base64.encodeFile(uri, function (base64) {
+        base64Data = base64;
+        successCallback()
+      }, function (error) {
+        $log.error('Failed to convert to base64: ' + error);
+        failureCallback('Error while processing a picture.');
+      });
+    }
+
+    function getImageUri() {
+      return imageFileUri;
+    }
+
+    function getBase64() {
+      return base64Data;
+    }
+
+    function getFilenameWithExtension() {
+      return filenameWithExtension;
+    }
+
+    function getMime() {
+      return mime;
+    }
+
     return {
       upload: function (successCallback, failureCallback) {
         getPicture(Camera.PictureSourceType.PHOTOLIBRARY, successCallback, failureCallback)
@@ -88,17 +130,9 @@ angular.module('symphonia.services')
       take: function (successCallback, failureCallback) {
         getPicture(Camera.PictureSourceType.CAMERA, successCallback, failureCallback);
       },
-      getImageURI: function () {
-        return imageFileURI;
-      },
-      getBase64: function () {
-        return base64Data;
-      },
-      getFilenameWithExtension: function () {
-        return filenameWithExtension;
-      },
-      getMime: function () {
-        return mime;
-      }
+      getImageUri: getImageUri,
+      getBase64: getBase64,
+      getFilenameWithExtension: getFilenameWithExtension,
+      getMime: getMime
     };
   });
