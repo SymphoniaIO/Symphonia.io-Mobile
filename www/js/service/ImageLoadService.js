@@ -15,61 +15,108 @@
  */
 
 angular.module('symphonia.services')
-  .factory('ImageLoadService', function ($log, $cordovaCamera, $cordovaDevice) {
+  .factory('ImageLoadService', function ($q, $log, $cordovaCamera, $cordovaDevice) {
     var imageFileUri = '';
     var filenameWithExtension = '';
     var base64Data = '';
     var mime = 'image/*';
 
-    function getPicture(sourceType, successCallback, failureCallback) {
+    function getPicture(sourceType) {
+
+      var deferred = $q.defer();
 
       var options = {
         destinationType: Camera.DestinationType.FILE_URI,
-        saveToPhotoAlbum: true,
         mediaType: Camera.MediaType.PICTURE,
         sourceType: sourceType
       };
 
+      options.saveToPhotoAlbum = sourceType === Camera.PictureSourceType.CAMERA;
+
       $cordovaCamera.getPicture(options).then(function (newUri) {
         switch ($cordovaDevice.getPlatform()) {
           case 'iOS':
-            isIos(newUri, successCallback, failureCallback);
+            isIos(newUri).then(function () {
+              deferred.resolve();
+            }, function (message) {
+              deferred.reject(message);
+            });
             break;
           case 'Android':
-            isAndroid(newUri, successCallback, failureCallback);
+            isAndroid(newUri).then(function () {
+              deferred.resolve();
+            }, function (message) {
+              deferred.reject(message);
+            });
             break;
           default:
-            return;
+            deferred.reject('');
         }
       }, function (error) {
+        if (error.toUpperCase() === 'Selection cancelled.'.toUpperCase() ||
+          error.toUpperCase() === 'Camera cancelled.'.toUpperCase() ||
+          error.toUpperCase() === 'no image selected'.toUpperCase()) {
+          // When cancelled by user, we do not want to show error dialog.
+          // FIXME: maybe there is some another error message when camera cancelled on iOS.
+          // #wontfix until there is a opportunity to try on the real iOS device (not just simulator)
+          return;
+        }
         $log.error('Failed to pick a photo: ' + error);
-        failureCallback('Error while processing a picture.')
+        deferred.reject('Error while processing a picture.');
+      });
+
+      return deferred.promise;
+    }
+
+    function isIos(uri) {
+      return getCorrectFileUriAndBase64Data(uri).then(function (uriAndRawBase64) {
+        base64Data = uriAndRawBase64.base64;
+        imageFileUri = uriAndRawBase64.uri;
+        return $q.resolve();
+      }, function (message) {
+        return $q.reject(message);
       });
     }
 
-    function isIos(uri, successCallback, failureCallback) {
-      setFieldsAndData(uri, successCallback, failureCallback);
-    }
+    function isAndroid(uri) {
+      var deferred = $q.defer();
 
-    function isAndroid(uri, successCallback, failureCallback) {
       window.FilePath.resolveNativePath(uri, function (correctUri) {
-        setFieldsAndData(correctUri, successCallback, failureCallback);
+        // FIXME newest security update will probably crash this workaround
+        getCorrectFileUriAndBase64Data(correctUri).then(function (uriAndRawBase64) {
+          base64Data = uriAndRawBase64.base64;
+          imageFileUri = uriAndRawBase64.uri;
+          deferred.resolve();
+        }, function (message) {
+          deferred.reject(message);
+        });
       }, function (error) {
         $log.error('Failed to get the correct FILE_URI: ' + error);
-        failureCallback('Error while processing a picture.');
+        deferred.reject('Error while processing a picture.');
       });
+
+      return deferred.promise;
     }
 
-    function setFieldsAndData(uri, successCallback, failureCallback) {
+    function getCorrectFileUriAndBase64Data(uri) {
+      var deferred = $q.defer();
+
       filenameWithExtension = uri.substr(uri.lastIndexOf('/') + 1);
       var extension = filenameWithExtension.substr(filenameWithExtension.lastIndexOf('.') + 1);
 
       if (!isFileSupported(extension)) {
-        failureCallback('File type not supported!');
+        $log.error('Selected file\'s extension is not supported: ' + extension);
+        deferred.reject('File type not supported');
       } else {
-        imageFileUri = uri;
-        toBase64(imageFileUri, successCallback, failureCallback);
+        window.plugins.Base64.encodeFile(uri, function (base64) {
+          deferred.resolve({base64: base64, uri: uri});
+        }, function (error) {
+          $log.error('Failed to convert to base64: ' + error);
+          deferred.reject('Error while processing a picture.');
+        })
       }
+
+      return deferred.promise;
     }
 
     function isFileSupported(extension) {
@@ -97,14 +144,12 @@ angular.module('symphonia.services')
       }
     }
 
-    function toBase64(uri, successCallback, failureCallback) {
-      window.plugins.Base64.encodeFile(uri, function (base64) {
-        base64Data = base64;
-        successCallback()
-      }, function (error) {
-        $log.error('Failed to convert to base64: ' + error);
-        failureCallback('Error while processing a picture.');
-      });
+    function upload() {
+      return getPicture(Camera.PictureSourceType.PHOTOLIBRARY);
+    }
+
+    function take() {
+      return getPicture(Camera.PictureSourceType.CAMERA);
     }
 
     function getImageUri() {
@@ -124,12 +169,8 @@ angular.module('symphonia.services')
     }
 
     return {
-      upload: function (successCallback, failureCallback) {
-        getPicture(Camera.PictureSourceType.PHOTOLIBRARY, successCallback, failureCallback)
-      },
-      take: function (successCallback, failureCallback) {
-        getPicture(Camera.PictureSourceType.CAMERA, successCallback, failureCallback);
-      },
+      upload: upload,
+      take: take,
       getImageUri: getImageUri,
       getBase64: getBase64,
       getFilenameWithExtension: getFilenameWithExtension,

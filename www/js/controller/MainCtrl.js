@@ -18,18 +18,17 @@ angular.module('symphonia.controllers')
   .controller('MainCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, $state, ImageLoadService) {
     $ionicPlatform.ready(function () {
       $scope.uploadPicture = function () {
-        ImageLoadService.upload(function () {
-          $state.go('options');
-        }, showErrorDialog);
+        ImageLoadService.upload().then(goToOptions, showErrorDialog);
       };
 
       $scope.takeAPicture = function () {
-        ImageLoadService.take(function () {
-          $state.go('options');
-        }, showErrorDialog);
+        ImageLoadService.take().then(goToOptions, showErrorDialog);
       };
     });
 
+    function goToOptions() {
+      $state.go('options');
+    }
     function showErrorDialog(message) {
       $cordovaDialogs.alert(message, 'An error has occurred')
     }
