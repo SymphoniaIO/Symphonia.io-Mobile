@@ -62,24 +62,26 @@ angular.module('symphonia.services')
       }
     }
 
-    function _saveFile(filename, didSaveCallback, didNotSaveCallback) {
+    function _saveFile(filename) {
+      var deferred = $q.defer();
       var saveDestination = $cordovaDevice.getPlatform() === 'iOS' ? cordova.file.dataDirectory : cordova.file.externalDataDirectory;
       if (savedFileDetails.path !== undefined && savedFileDetails.path === getCacheDir()) {
         //already saved in the cache folder
-        alreadyInCache(saveDestination, filename, didSaveCallback, didNotSaveCallback);
+        return alreadyInCache(saveDestination, filename);
       } else {
         $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
           .then(function (success) {
             savedFileDetails.path = saveDestination;
             savedFileDetails.name = filename;
             var message = 'File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.';
-            didSaveCallback(message, true);
-            $log.info(message)
+            $log.info(message);
+            deferred.resolve(message);
           }, function (error) {
             var message = 'Failed to save the file';
             $log.error(message + '\n' + error);
-            didNotSaveCallback(message);
+            deferred.reject(message);
           });
+        return deferred.promise;
       }
     }
 
@@ -122,9 +124,14 @@ angular.module('symphonia.services')
         };
 
         $cordovaEmailComposer.open(emailDetails).then(function () {
+          // THIS IS NEVER CALLED
           deferred.resolve();
         }, function () {
-          deferred.reject('An error occurred while composing the mail.');
+          //deferred.reject('An error occurred while composing the mail.');
+          deferred.resolve(); // not correct actually, but there is no other way
+          // it could be kinda solved by not using the ngCordova's namespace, but plugin's own one.
+          // That adds a parameter to callback which says whether email has been sent or not. but it only works on the iOS
+          // In order to stay consistent and not use plugins themselves directly I choose this way.
         });
       }, function () {
         deferred.reject('Email composer not available.');
@@ -132,18 +139,20 @@ angular.module('symphonia.services')
       return deferred.promise;
     }
 
-    function alreadyInCache(newDestination, newName, didSaveCallback, didNotSaveCallback) {
+    function alreadyInCache(newDestination, newName) {
+      var deferred = $q.defer();
       $cordovaFile.moveFile(getCacheDir(), tmpName + '.' + format, newDestination, newName + '.' + format)
         .then(function () {
           $log.info('File \'' + tmpName + '.' + format + '\' moved from cache and saved to \'' + newDestination + '\' as \'' + newName + '.' + format + '\'.');
           savedFileDetails.path = newDestination;
           savedFileDetails.name = newName;
           var message = 'File \'' + newName + '.' + format + '\' saved to \'' + newDestination + '\'.';
-          didSaveCallback(message, true);
+          deferred.resolve(message);
         }, function (error) {
           $log.error('Failed to move file from cache to storage: ' + error);
-          didNotSaveCallback('Failed to save the file.');
-        })
+          deferred.reject('Failed to save the file.');
+        });
+      return deferred.promise;
     }
 
     function getCacheDir() {
@@ -152,8 +161,8 @@ angular.module('symphonia.services')
 
     return {
       setOutputDataAndFormat: function (data, dataFormat) {
+        // FIXME: Is this really a good way?
         outputData = data;
-        $log.debug("OUTPUT DATA: " + data);
         cacheFolder = undefined;
         savedFileDetails.path = undefined;
         savedFileDetails.name = undefined;
@@ -161,6 +170,9 @@ angular.module('symphonia.services')
       },
       open: _open,
       composeEmail: _compose,
-      saveFile: _saveFile
+      saveFile: _saveFile,
+      showSendButton: function () {
+        return $cordovaEmailComposer.isAvailable()
+      }
     }
   });

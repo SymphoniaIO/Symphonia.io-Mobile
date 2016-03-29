@@ -15,10 +15,10 @@
  */
 
 angular.module('symphonia.controllers')
-  .controller('SuccessCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, $cordovaEmailComposer, $cordovaToast, SaveAndSendService) {
+  .controller('SuccessCtrl', function ($log, $scope, $ionicPlatform, $cordovaDialogs, $cordovaToast, SaveAndSendService) {
     $ionicPlatform.ready(function () {
 
-      $cordovaEmailComposer.isAvailable().then(function () {
+      SaveAndSendService.showSendButton().then(function () {
         $scope.emailAvailable = true;
         $scope.sendEmail = sendEmail;
       }, function () {
@@ -30,7 +30,8 @@ angular.module('symphonia.controllers')
           .then(function (result) {
             switch (result.buttonIndex) {
               case 2:
-                SaveAndSendService.saveFile(result.input1, showToast, showErrorDialog);
+                SaveAndSendService.saveFile(result.input1)
+                  .then(showToast, showErrorDialog);
                 break;
               default:
                 break;
@@ -46,14 +47,13 @@ angular.module('symphonia.controllers')
         })
       }
 
-      function showToast(message, clickable) {
+      function showToast(message) {
         message += '\n\nTap here to open it!';
         window.plugins.toast.showWithOptions({
           message: message,
-          duration: 6000,
+          duration: 8000,
           position: 'bottom'
-        }, clickable ? openSavedOr : function () {
-        })
+        }, openSavedOr)
       }
 
       function openSavedOr(result) {

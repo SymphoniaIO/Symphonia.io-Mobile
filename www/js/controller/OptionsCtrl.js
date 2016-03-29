@@ -15,7 +15,7 @@
  */
 
 angular.module('symphonia.controllers')
-  .controller('OptionsCtrl', function ($scope, $ionicLoading, $state, $cordovaDevice, ImageLoadService, ProcessingService) {
+  .controller('OptionsCtrl', function ($scope, $ionicLoading, $state, $cordovaDevice, $cordovaDialogs, ImageLoadService, ProcessingService) {
     $scope.outputFormatList = [
       {text: 'Music XML', value: 'musicxml'},
       {text: 'PDF', value: 'pdf'}
@@ -36,12 +36,13 @@ angular.module('symphonia.controllers')
         template: '<ion-spinner icon="circles"></ion-spinner>'
       });
 
-      ProcessingService.process($scope.data.outputFormat, function () {
+      ProcessingService.process($scope.data.outputFormat).then(function () {
         $ionicLoading.hide();
         $state.go('success');
-      }, function () {
+      }, function (message) {
         $ionicLoading.hide();
-        $state.go('failure');
+        message += ' Please try again later.';
+        $cordovaDialogs.alert(message, 'An error has occurred.');
       });
     };
   });

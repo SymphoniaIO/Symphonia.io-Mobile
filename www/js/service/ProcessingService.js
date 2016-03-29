@@ -15,10 +15,10 @@
  */
 
 angular.module('symphonia.services')
-  .factory('ProcessingService', function ($log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
-    var errorMessage = '';
+  .factory('ProcessingService', function ($q, $log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
 
-    function _process(format, successCallback, failureCallback) {
+    function _process(format) {
+      var deferred = $q.defer();
       // TODO with stable symphonia service, uncomment the following line
       //var url = 'http://46.101.224.141:8080/api/omr'; // and delete the next one
       var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.1.6:8080/api/omr';
@@ -35,37 +35,36 @@ angular.module('symphonia.services')
       $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageUri(), options)
         .then(function (result) {
           if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
-            errorMessage = "Provide image with higher resolution.";
-            failureCallback()
+            var message = "Provide image with higher resolution.";
+            deferred.reject(message);
           } else {
             SaveAndSendService.setOutputDataAndFormat(result.response, format);
+            var message = '';
             switch (result.responseCode) {
               case 500:
-                errorMessage = "Error processing input image.";
-                failureCallback();
+                message = "Error processing input image.";
                 break;
               case 204:
-                errorMessage = "No supported image provided.";
-                failureCallback();
+                message = "No supported image provided.";
                 break;
               default:
-                successCallback();
                 break;
+            }
+            if (message === '') {
+              deferred.resolve();
+            } else {
+              deferred.reject(message);
             }
           }
         }, function (error) {
           $log.error('Failed to upload a file:\n' + error.code);
-          errorMessage = "Failed to upload a file.\nCheck your internet connection.";
-          failureCallback();
+          var message = "Failed to upload a file.\nCheck your internet connection.";
+          deferred.reject(message);
         });
-    }
-
-    function _getErrorMessage() {
-      return errorMessage;
+      return deferred.promise;
     }
 
     return {
-      process: _process,
-      getErrorMessage: _getErrorMessage
+      process: _process
     }
   });
