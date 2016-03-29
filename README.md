@@ -24,9 +24,7 @@ It is **recommended** to install in this order!
 * gulp
   * `npm install -g gulp`
 * ios-sim (only if you are on Mac):
-  * `npm install -g ion-sim`
-* ionic and cordova CLIs
-  * `npm install -g cordova ionis`
+  * `npm install -g ios-sim`
 
 ### Installation
 1. `git clone` this repository.
