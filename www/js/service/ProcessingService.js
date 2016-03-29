@@ -21,7 +21,7 @@ angular.module('symphonia.services')
     function _process(format, successCallback, failureCallback) {
       // TODO with stable symphonia service, uncomment the following line
       //var url = 'http://46.101.224.141:8080/api/omr'; // and delete the next one
-      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.11:8080/api/omr';
+      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.1.6:8080/api/omr';
 
       var endpoint = url + '/' + format;
 
@@ -60,10 +60,12 @@ angular.module('symphonia.services')
         });
     }
 
+    function _getErrorMessage() {
+      return errorMessage;
+    }
+
     return {
       process: _process,
-      getErrorMessage: function () {
-        return errorMessage;
-      }
+      getErrorMessage: _getErrorMessage
     }
   });

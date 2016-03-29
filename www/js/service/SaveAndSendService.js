@@ -15,7 +15,7 @@
  */
 
 angular.module('symphonia.services')
-  .factory('SaveAndSendService', function ($log, $cordovaDevice, $cordovaFile, $cordovaEmailComposer, $cordovaToast, $cordovaFileOpener2) {
+  .factory('SaveAndSendService', function ($q, $log, $cordovaDevice, $cordovaFile, $cordovaEmailComposer, $cordovaFileOpener2) {
     var outputData = '';
     var format = '';
     var tmpName = 'tmpData';
@@ -24,14 +24,6 @@ angular.module('symphonia.services')
       path: undefined,
       name: undefined // WITHOUT EXTENSION!!
     };
-
-    function _showSendButton(ifAvailableCallback, ifNotAvailableCallback) {
-      $cordovaEmailComposer.isAvailable().then(function () {
-        ifAvailableCallback();
-      }, function () {
-        ifNotAvailableCallback();
-      });
-    }
 
     function _open() {
       var mime = format === 'xml' ? 'text/xml' : 'application/pdf';
@@ -44,9 +36,10 @@ angular.module('symphonia.services')
     }
 
     function _compose() {
+      var deferred = $q.defer();
       if (savedFileDetails.path !== undefined) {
         //file already saved!
-        alreadySaved();
+        return alreadySaved();
       } else {
         cacheFolder = getCacheDir();
         $cordovaFile.writeFile(cacheFolder, tmpName + '.' + format, outputData, true)
@@ -54,10 +47,18 @@ angular.module('symphonia.services')
             $log.info('File \'' + tmpName + '.' + format + '\' saved at: \'' + cacheFolder + '\'.');
             savedFileDetails.path = cacheFolder;
             savedFileDetails.name = tmpName;
-            selectAttachment(cacheFolder, tmpName);
+            selectAttachment(cacheFolder, tmpName)
+              .then(function() {
+                deferred.resolve();
+              }, function(errorMsg) {
+                deferred.reject(errorMsg);
+              });
           }, function (error) {
             $log.error('Failed to save file to cache directory:' + error);
+            deferred.reject('An error occurred while saving the file.');
           });
+
+        return deferred.promise;
       }
     }
 
@@ -69,11 +70,10 @@ angular.module('symphonia.services')
       } else {
         $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
           .then(function (success) {
-            didSaveCallback();
             savedFileDetails.path = saveDestination;
             savedFileDetails.name = filename;
             var message = 'File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.';
-            $cordovaToast.showLongBottom(message);
+            didSaveCallback(message, true);
             $log.info(message)
           }, function (error) {
             var message = 'Failed to save the file';
@@ -85,21 +85,29 @@ angular.module('symphonia.services')
 
     function alreadySaved() {
       $log.info('Picking a file \'' + savedFileDetails.name + '.' + format + '\' from \'' + savedFileDetails.path + '\' instead of caching one.');
-      selectAttachment(savedFileDetails.path, savedFileDetails.name);
+      return selectAttachment(savedFileDetails.path, savedFileDetails.name);
     }
 
     function selectAttachment(directory, fileName) {
+      var deferred = $q.defer();
       $log.info('Selecting a file \'' + fileName + '.' + format + '\' from \'' + directory + '\' as an attachment.');
       $cordovaFile.readAsDataURL(directory, fileName + '.' + format)
         .then(function (success) {
           var data64 = success.split(';base64,').pop();
-          openComposer(data64);
+          openComposer(data64).then(function () {
+            deferred.resolve();
+          }, function (errorMsg) {
+            deferred.reject(errorMsg);
+          });
         }, function (error) {
           $log.info('File (\'' + fileName + '.' + format + '\' in \'' + directory + '\') to send NOT read:\n' + error);
+          deferred.reject('Failed to read the attachment file.');
         });
+      return deferred.promise;
     }
 
     function openComposer(data) {
+      var deferred = $q.defer();
       var attachment = 'base64:' + savedFileDetails.name + '.' + format + '//' + data;
       $cordovaEmailComposer.isAvailable().then(function () {
         //email available
@@ -114,24 +122,24 @@ angular.module('symphonia.services')
         };
 
         $cordovaEmailComposer.open(emailDetails).then(function () {
-          $cordovaToast.showShortBottom('Email sent.');
+          deferred.resolve();
         }, function () {
-          // user cancelled email
-          $cordovaToast.showShortBottom('Email not sent.');
+          deferred.reject('An error occurred while composing the mail.');
         });
       }, function () {
-        // not available
+        deferred.reject('Email composer not available.');
       });
+      return deferred.promise;
     }
 
     function alreadyInCache(newDestination, newName, didSaveCallback, didNotSaveCallback) {
       $cordovaFile.moveFile(getCacheDir(), tmpName + '.' + format, newDestination, newName + '.' + format)
         .then(function () {
-          didSaveCallback();
           $log.info('File \'' + tmpName + '.' + format + '\' moved from cache and saved to \'' + newDestination + '\' as \'' + newName + '.' + format + '\'.');
           savedFileDetails.path = newDestination;
           savedFileDetails.name = newName;
-          $cordovaToast.showLongBottom('File \'' + newName + '.' + format + '\' saved to \'' + newDestination + '\'.')
+          var message = 'File \'' + newName + '.' + format + '\' saved to \'' + newDestination + '\'.';
+          didSaveCallback(message, true);
         }, function (error) {
           $log.error('Failed to move file from cache to storage: ' + error);
           didNotSaveCallback('Failed to save the file.');
@@ -145,12 +153,12 @@ angular.module('symphonia.services')
     return {
       setOutputDataAndFormat: function (data, dataFormat) {
         outputData = data;
+        $log.debug("OUTPUT DATA: " + data);
         cacheFolder = undefined;
         savedFileDetails.path = undefined;
         savedFileDetails.name = undefined;
         format = dataFormat == 'musicxml' ? 'xml' : 'pdf';
       },
-      showSendButton: _showSendButton,
       open: _open,
       composeEmail: _compose,
       saveFile: _saveFile

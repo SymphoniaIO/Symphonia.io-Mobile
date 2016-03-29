@@ -15,26 +15,22 @@
  */
 
 angular.module('symphonia.controllers')
-  .controller('SuccessCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, ImageLoadService, SaveAndSendService) {
+  .controller('SuccessCtrl', function ($scope, $ionicPlatform, $cordovaDialogs, $cordovaEmailComposer, $cordovaToast, SaveAndSendService) {
     $ionicPlatform.ready(function () {
-      SaveAndSendService.showSendButton(function () {
+
+      $cordovaEmailComposer.isAvailable().then(function () {
         $scope.emailAvailable = true;
+        $scope.sendEmail = sendEmail;
       }, function () {
         $scope.emailAvailable = false;
       });
-
-      $scope.resultSaved = false;
-
-      $scope.sendEmail = SaveAndSendService.composeEmail;
 
       $scope.saveImage = function () {
         $cordovaDialogs.prompt('Enter the name of a file, WITHOUT suffix', 'Filename', ['Cancel', 'Save'], 'scores')
           .then(function (result) {
             switch (result.buttonIndex) {
               case 2:
-                SaveAndSendService.saveFile(result.input1, function () {
-                  $scope.resultSaved = true;
-                }, showErrorDialog);
+                SaveAndSendService.saveFile(result.input1, showToast, showErrorDialog);
                 break;
               default:
                 break;
@@ -42,7 +38,29 @@ angular.module('symphonia.controllers')
           });
       };
 
-      $scope.openInExternal = SaveAndSendService.open;
+      function sendEmail() {
+        SaveAndSendService.composeEmail().then(function () {
+          $cordovaToast.showShortBottom('Email sent.');
+        }, function (errorMsg) {
+          $cordovaToast.showLongBottom(errorMsg);
+        })
+      }
+
+      function showToast(message, clickable) {
+        message += '\n\nTap here to open it!';
+        window.plugins.toast.showWithOptions({
+          message: message,
+          duration: 6000,
+          position: 'bottom'
+        }, clickable ? openSavedOr : function () {
+        })
+      }
+
+      function openSavedOr(result) {
+        if (result && result.event) {
+          SaveAndSendService.open();
+        }
+      }
 
       function showErrorDialog(message) {
         $cordovaDialogs.alert(message, 'An error has occurred.');

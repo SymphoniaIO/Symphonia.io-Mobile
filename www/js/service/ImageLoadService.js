@@ -81,8 +81,10 @@ angular.module('symphonia.services')
     function isAndroid(uri) {
       var deferred = $q.defer();
 
+      $log.debug('URI before edition:' + uri);
       window.FilePath.resolveNativePath(uri, function (correctUri) {
         // FIXME newest security update will probably crash this workaround
+        $log.debug('URI after edition' + correctUri);
         getCorrectFileUriAndBase64Data(correctUri).then(function (uriAndRawBase64) {
           base64Data = uriAndRawBase64.base64;
           imageFileUri = uriAndRawBase64.uri;
@@ -144,36 +146,36 @@ angular.module('symphonia.services')
       }
     }
 
-    function upload() {
+    function _upload() {
       return getPicture(Camera.PictureSourceType.PHOTOLIBRARY);
     }
 
-    function take() {
+    function _take() {
       return getPicture(Camera.PictureSourceType.CAMERA);
     }
 
-    function getImageUri() {
+    function _getImageUri() {
       return imageFileUri;
     }
 
-    function getBase64() {
+    function _getBase64() {
       return base64Data;
     }
 
-    function getFilenameWithExtension() {
+    function _getFilenameWithExtension() {
       return filenameWithExtension;
     }
 
-    function getMime() {
+    function _getMime() {
       return mime;
     }
 
     return {
-      upload: upload,
-      take: take,
-      getImageUri: getImageUri,
-      getBase64: getBase64,
-      getFilenameWithExtension: getFilenameWithExtension,
-      getMime: getMime
+      upload: _upload,
+      take: _take,
+      getImageUri: _getImageUri,
+      getBase64: _getBase64,
+      getFilenameWithExtension: _getFilenameWithExtension,
+      getMime: _getMime
     };
   });
