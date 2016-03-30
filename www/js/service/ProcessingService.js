@@ -18,11 +18,9 @@ angular.module('symphonia.services')
   .factory('ProcessingService', function ($q, $log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
 
     function _process(format) {
-      var deferred = $q.defer();
       // TODO with stable symphonia service, uncomment the following line
       //var url = 'http://46.101.224.141:8080/api/omr'; // and delete the next one
-      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://10.102.15.131:8080/api/omr';
-
+      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.13:8080/api/omr';
       var endpoint = url + '/' + format;
 
       var options = new FileUploadOptions();
@@ -32,7 +30,7 @@ angular.module('symphonia.services')
       options.mimeType = ImageLoadService.getMime();
 
       // TODO maybe try different framework/plugin or do something to fix this
-      $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageUri(), options)
+      return $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageUri(), options)
         .then(function (result) {
           var message = '';
           if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
@@ -50,13 +48,12 @@ angular.module('symphonia.services')
                 break;
             }
           }
-          message === '' ? deferred.resolve() : deferred.reject(message);
+          return message === '' ? $q.resolve() : $q.reject(message);
         }, function (error) {
           $log.error('Failed to upload a file:\n' + error.code);
           var message = "Failed to upload a file.\nCheck your internet connection.";
-          deferred.reject(message);
+          return $q.reject(message);
         });
-      return deferred.promise;
     }
 
     return {
