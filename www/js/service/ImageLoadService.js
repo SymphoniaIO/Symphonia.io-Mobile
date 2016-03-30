@@ -45,7 +45,7 @@ angular.module('symphonia.services')
           // When cancelled by user, we do not want to show error dialog.
           // FIXME: maybe there is some another error message when camera cancelled on iOS.
           // #wontfix until there is a opportunity to try on the real iOS device (not just simulator)
-          return $q.when();
+          return $q.resolve();
         }
         $log.error('Failed to pick a photo: ' + error);
         return $q.reject('Error while processing a picture.');
@@ -56,29 +56,34 @@ angular.module('symphonia.services')
       return getCorrectFileUriAndBase64Data(uri).then(function (uriAndRawBase64) {
         base64Data = uriAndRawBase64.base64;
         imageFileUri = uriAndRawBase64.uri;
-        return $q.when();
+        return $q.resolve();
       }, function (message) {
         return $q.reject(message);
       });
     }
 
     function isAndroid(uri) {
-      var deferred = $q.defer();
-
-      $log.debug('URI before edition:' + uri);
-      window.FilePath.resolveNativePath(uri, function (correctUri) {
-        // FIXME newest security update will probably crash this workaround
-        $log.debug('URI after edition' + correctUri);
-        getCorrectFileUriAndBase64Data(correctUri).then(function (uriAndRawBase64) {
+      return resolveNativePathPromiseWrapper(uri).then(function (correctUri) {
+        return getCorrectFileUriAndBase64Data(correctUri).then(function (uriAndRawBase64) {
           base64Data = uriAndRawBase64.base64;
           imageFileUri = uriAndRawBase64.uri;
-          deferred.resolve();
-        }, function (message) {
-          deferred.reject(message);
-        });
+          return $q.resolve();
+        }, function(message) {
+          return $q.reject(message);
+        })
       }, function (error) {
         $log.error('Failed to get the correct FILE_URI: ' + error);
-        deferred.reject('Error while processing a picture.');
+        return $q.reject('Error while processing a picture.');
+      });
+    }
+
+    function resolveNativePathPromiseWrapper(uri) {
+      var deferred = $q.defer();
+
+      window.FilePath.resolveNativePath(uri, function (correctUri) {
+        deferred.resolve(correctUri);
+      }, function (error) {
+        deferred.reject(error);
       });
 
       return deferred.promise;
