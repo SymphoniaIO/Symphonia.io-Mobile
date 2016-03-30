@@ -46,6 +46,11 @@ ion-content {
   background-color: $global_secondary-color !important;
 }
 
+body {
+  //this solves that 1 px gap in the bottom.. but loading is hell.
+  background-color: $global_secondary-dark !important;
+}
+
 //IMAGE BACKGROUND
 .banner-background {
   background: url($global_banner-img) no-repeat center center fixed;
@@ -140,26 +145,6 @@ ion-content {
 }
 
 .buttons-group_success {
-  @extend %buttons-group_abstract;
-
-  i {
-    color: $global_primary-color;
-  }
-}
-
-/**  FAILURE SCREEN  **/
-.title_failure {
-  @extend %title_abstract;
-  color: $global_primary-color;
-  position: relative;
-}
-
-.text_failure {
-  @extend %text_abstract;
-  color: $global_primary-color;
-}
-
-.buttons-group_failure {
   @extend %buttons-group_abstract;
 
   i {

@@ -26,7 +26,7 @@ angular.module('symphonia.services')
         destinationType: Camera.DestinationType.FILE_URI,
         mediaType: Camera.MediaType.PICTURE,
         sourceType: sourceType,
-        saveToPhoroAlbum: sourceType === Camera.PictureSourceType.CAMERA
+        saveToPhotoAlbum: sourceType === Camera.PictureSourceType.CAMERA
       };
 
       return $cordovaCamera.getPicture(options).then(function (newUri) {
