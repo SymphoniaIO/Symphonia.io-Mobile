@@ -22,35 +22,21 @@ angular.module('symphonia.services')
     var mime = 'image/*';
 
     function getPicture(sourceType) {
-
-      var deferred = $q.defer();
-
       var options = {
         destinationType: Camera.DestinationType.FILE_URI,
         mediaType: Camera.MediaType.PICTURE,
-        sourceType: sourceType
+        sourceType: sourceType,
+        saveToPhoroAlbum: sourceType === Camera.PictureSourceType.CAMERA
       };
 
-      options.saveToPhotoAlbum = sourceType === Camera.PictureSourceType.CAMERA;
-
-      $cordovaCamera.getPicture(options).then(function (newUri) {
+      return $cordovaCamera.getPicture(options).then(function (newUri) {
         switch ($cordovaDevice.getPlatform()) {
           case 'iOS':
-            isIos(newUri).then(function () {
-              deferred.resolve();
-            }, function (message) {
-              deferred.reject(message);
-            });
-            break;
+            return isIos(newUri);
           case 'Android':
-            isAndroid(newUri).then(function () {
-              deferred.resolve();
-            }, function (message) {
-              deferred.reject(message);
-            });
-            break;
+            return isAndroid(newUri);
           default:
-            deferred.reject('');
+            return $q.reject('');
         }
       }, function (error) {
         if (error.toUpperCase() === 'Selection cancelled.'.toUpperCase() ||
@@ -59,20 +45,18 @@ angular.module('symphonia.services')
           // When cancelled by user, we do not want to show error dialog.
           // FIXME: maybe there is some another error message when camera cancelled on iOS.
           // #wontfix until there is a opportunity to try on the real iOS device (not just simulator)
-          return;
+          return $q.when();
         }
         $log.error('Failed to pick a photo: ' + error);
-        deferred.reject('Error while processing a picture.');
+        return $q.reject('Error while processing a picture.');
       });
-
-      return deferred.promise;
     }
 
     function isIos(uri) {
       return getCorrectFileUriAndBase64Data(uri).then(function (uriAndRawBase64) {
         base64Data = uriAndRawBase64.base64;
         imageFileUri = uriAndRawBase64.uri;
-        return $q.resolve();
+        return $q.when();
       }, function (message) {
         return $q.reject(message);
       });

@@ -21,7 +21,7 @@ angular.module('symphonia.services')
       var deferred = $q.defer();
       // TODO with stable symphonia service, uncomment the following line
       //var url = 'http://46.101.224.141:8080/api/omr'; // and delete the next one
-      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.1.6:8080/api/omr';
+      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://10.102.15.131:8080/api/omr';
 
       var endpoint = url + '/' + format;
 
@@ -34,12 +34,11 @@ angular.module('symphonia.services')
       // TODO maybe try different framework/plugin or do something to fix this
       $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageUri(), options)
         .then(function (result) {
+          var message = '';
           if ($cordovaDevice.getPlatform() === 'Android' && result.response.length == 0) {
-            var message = "Provide image with higher resolution.";
-            deferred.reject(message);
+            message = "Provide image with higher resolution.";
           } else {
             SaveAndSendService.setOutputDataAndFormat(result.response, format);
-            var message = '';
             switch (result.responseCode) {
               case 500:
                 message = "Error processing input image.";
@@ -50,12 +49,8 @@ angular.module('symphonia.services')
               default:
                 break;
             }
-            if (message === '') {
-              deferred.resolve();
-            } else {
-              deferred.reject(message);
-            }
           }
+          message === '' ? deferred.resolve() : deferred.reject(message);
         }, function (error) {
           $log.error('Failed to upload a file:\n' + error.code);
           var message = "Failed to upload a file.\nCheck your internet connection.";
