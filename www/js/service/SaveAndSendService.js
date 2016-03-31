@@ -27,61 +27,46 @@ angular.module('symphonia.services')
 
     function _open() {
       var mime = format === 'xml' ? 'text/xml' : 'application/pdf';
-      $cordovaFileOpener2.open(savedFileDetails.path + savedFileDetails.name + '.' + format, mime)
-        .then(function () {
-          //TODO maybe do something here?
-        }, function () {
-          //TODO maybe do something here?
-        });
+      return $cordovaFileOpener2.open(savedFileDetails.path + savedFileDetails.name + '.' + format, mime);
     }
 
     function _compose() {
-      var deferred = $q.defer();
       if (savedFileDetails.path !== undefined) {
         //file already saved!
         return alreadySaved();
       } else {
         cacheFolder = getCacheDir();
-        $cordovaFile.writeFile(cacheFolder, tmpName + '.' + format, outputData, true)
+        return $cordovaFile.writeFile(cacheFolder, tmpName + '.' + format, outputData, true)
           .then(function () {
             $log.info('File \'' + tmpName + '.' + format + '\' saved at: \'' + cacheFolder + '\'.');
             savedFileDetails.path = cacheFolder;
             savedFileDetails.name = tmpName;
-            selectAttachment(cacheFolder, tmpName)
-              .then(function() {
-                deferred.resolve();
-              }, function(errorMsg) {
-                deferred.reject(errorMsg);
-              });
+            return selectAttachment(cacheFolder, tmpName);
           }, function (error) {
             $log.error('Failed to save file to cache directory:' + error);
-            deferred.reject('An error occurred while saving the file.');
+            return $q.reject('An error occurred while saving the file.');
           });
-
-        return deferred.promise;
       }
     }
 
     function _saveFile(filename) {
-      var deferred = $q.defer();
       var saveDestination = $cordovaDevice.getPlatform() === 'iOS' ? cordova.file.dataDirectory : cordova.file.externalDataDirectory;
       if (savedFileDetails.path !== undefined && savedFileDetails.path === getCacheDir()) {
         //already saved in the cache folder
         return alreadyInCache(saveDestination, filename);
       } else {
-        $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
+        return $cordovaFile.writeFile(saveDestination, filename + '.' + format, outputData, true)
           .then(function (success) {
             savedFileDetails.path = saveDestination;
             savedFileDetails.name = filename;
             var message = 'File \'' + filename + '.' + format + '\' saved to \'' + saveDestination + '\'.';
             $log.info(message);
-            deferred.resolve(message);
+            return $q.resolve(message);
           }, function (error) {
             var message = 'Failed to save the file';
             $log.error(message + '\n' + error);
-            deferred.reject(message);
+            return $q.reject(message);
           });
-        return deferred.promise;
       }
     }
 
@@ -91,78 +76,66 @@ angular.module('symphonia.services')
     }
 
     function selectAttachment(directory, fileName) {
-      var deferred = $q.defer();
       $log.info('Selecting a file \'' + fileName + '.' + format + '\' from \'' + directory + '\' as an attachment.');
-      $cordovaFile.readAsDataURL(directory, fileName + '.' + format)
+      return $cordovaFile.readAsDataURL(directory, fileName + '.' + format)
         .then(function (success) {
           var data64 = success.split(';base64,').pop();
-          openComposer(data64).then(function () {
-            deferred.resolve();
-          }, function (errorMsg) {
-            deferred.reject(errorMsg);
-          });
+          return openComposer(data64);
         }, function (error) {
           $log.info('File (\'' + fileName + '.' + format + '\' in \'' + directory + '\') to send NOT read:\n' + error);
-          deferred.reject('Failed to read the attachment file.');
+          return $q.reject('Failed to read the attachment file.');
         });
-      return deferred.promise;
     }
 
     function openComposer(data) {
-      var deferred = $q.defer();
       var attachment = 'base64:' + savedFileDetails.name + '.' + format + '//' + data;
-      $cordovaEmailComposer.isAvailable().then(function () {
-        //email available
-        var emailDetails = {
-          app: 'mailto',
-          attachments: [
-            attachment
-          ],
-          subject: 'Digitized music scores',
-          body: 'This email contains file with music scores, that was produced by the <a href="https://www.symphonia.io">SYMPHONIA.IO</a> service.',
-          isHtml: true
-        };
-
-        $cordovaEmailComposer.open(emailDetails).then(function () {
-          // THIS IS NEVER CALLED
-          deferred.resolve();
+      return $cordovaEmailComposer.isAvailable()
+        .then(function () {
+          var emailDetails = {
+            app: 'mailto',
+            attachments: [
+              attachment
+            ],
+            subject: 'Digitized music scores',
+            body: 'This email contains file with music scores, that was produced by the <a href="https://www.symphonia.io">SYMPHONIA.IO</a> service.',
+            isHtml: true
+          };
+          return $cordovaEmailComposer.open(emailDetails)
+            .catch(function () {
+              return $q.resolve();
+              // because the open() function always goes to the error callback; no matter if success or not.
+            });
         }, function () {
-          //deferred.reject('An error occurred while composing the mail.');
-          deferred.resolve(); // not correct actually, but there is no other way
-          // it could be kinda solved by not using the ngCordova's namespace, but plugin's own one.
-          // That adds a parameter to callback which says whether email has been sent or not. but it only works on the iOS
-          // In order to stay consistent and not use plugins themselves directly I choose this way.
+          return $q.reject('Email composer not available.');
         });
-      }, function () {
-        deferred.reject('Email composer not available.');
-      });
-      return deferred.promise;
     }
 
     function alreadyInCache(newDestination, newName) {
-      var deferred = $q.defer();
-      $cordovaFile.moveFile(getCacheDir(), tmpName + '.' + format, newDestination, newName + '.' + format)
+      return $cordovaFile.moveFile(getCacheDir(), tmpName + '.' + format, newDestination, newName + '.' + format)
         .then(function () {
           $log.info('File \'' + tmpName + '.' + format + '\' moved from cache and saved to \'' + newDestination + '\' as \'' + newName + '.' + format + '\'.');
           savedFileDetails.path = newDestination;
           savedFileDetails.name = newName;
           var message = 'File \'' + newName + '.' + format + '\' saved to \'' + newDestination + '\'.';
-          deferred.resolve(message);
+          return $q.resolve(message);
         }, function (error) {
           $log.error('Failed to move file from cache to storage: ' + error);
-          deferred.reject('Failed to save the file.');
+          return $q.reject('Failed to save the file.');
         });
-      return deferred.promise;
     }
 
     function getCacheDir() {
       return cordova.file.cacheDirectory;
     }
 
+    function fuckIt(buffer) {
+      return new Blob([buffer], {type: 'application/pdf'});
+    }
+
     return {
       setOutputDataAndFormat: function (data, dataFormat) {
         // FIXME: Is this really a good way?
-        outputData = data;
+        outputData = fuckIt(data);
         cacheFolder = undefined;
         savedFileDetails.path = undefined;
         savedFileDetails.name = undefined;

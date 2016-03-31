@@ -15,7 +15,7 @@
  */
 
 angular.module('symphonia.services')
-  .factory('ProcessingService', function ($q, $log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
+  .factory('ProcessingService', function ($q, $http, $log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
 
     function _process(format) {
       // TODO with stable symphonia service, uncomment the following line
@@ -25,7 +25,7 @@ angular.module('symphonia.services')
 
       var options = new FileUploadOptions();
       options.fileKey = 'attachment';
-      options.chunkedMode = false;
+      options.chunkedMode = true; // REALLY?
       options.fileName = ImageLoadService.getFilenameWithExtension();
       options.mimeType = ImageLoadService.getMime();
 
