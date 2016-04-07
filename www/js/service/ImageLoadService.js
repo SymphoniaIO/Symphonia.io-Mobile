@@ -36,7 +36,7 @@ angular.module('symphonia.services')
           case 'Android':
             return isAndroid(newUri);
           default:
-            return $q.reject('');
+            return $q.reject('Unsupported platform!');
         }
       }, function (error) {
         if (error.toUpperCase() === 'Selection cancelled.'.toUpperCase() ||
@@ -45,7 +45,7 @@ angular.module('symphonia.services')
           // When cancelled by user, we do not want to show error dialog.
           // FIXME: maybe there is some another error message when camera cancelled on iOS.
           // #wontfix until there is a opportunity to try on the real iOS device (not just simulator)
-          return $q.resolve();
+          return $q.reject('ignore');
         }
         $log.error('Failed to pick a photo: ' + error);
         return $q.reject('Error while processing a picture.');

@@ -30,6 +30,10 @@ angular.module('symphonia.controllers')
       $state.go('options');
     }
     function showErrorDialog(message) {
-      $cordovaDialogs.alert(message, 'An error has occurred')
+      if (message !== 'ignore') {
+        // when message === ignore don't show any dialog
+        // this could happen if user cancel selection or closes camera
+        $cordovaDialogs.alert(message, 'An error has occurred')
+      }
     }
   });
