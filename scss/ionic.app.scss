@@ -46,6 +46,10 @@ ion-content {
   background-color: $global_secondary-color !important;
 }
 
+.my-bg {
+  background-color: $global_secondary-color;
+}
+
 //IMAGE BACKGROUND
 .banner-background {
   background: url($global_banner-img) no-repeat center center fixed;

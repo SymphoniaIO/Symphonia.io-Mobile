@@ -9208,6 +9208,9 @@ a.button {
 ion-content {
   background-color: #453d36 !important; }
 
+.my-bg {
+  background-color: #453d36; }
+
 .banner-background {
   background: url("../img/banner.jpg") no-repeat center center fixed;
   background-size: cover; }

@@ -19,7 +19,7 @@
 // VARIABLES
 $global_banner-img: '../img/banner.jpg';
 $global_primary-color: #eeeeee;
-$global_secondary-color: #453d36;
+$global_secondary-color: #453d36 !default;
 $global_secondary-dark: #3b3733;
 $global_button-font-size: 180%;
 $global_button-margin: 10px auto;
