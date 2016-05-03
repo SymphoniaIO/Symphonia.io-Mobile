@@ -15,19 +15,22 @@
  */
 
 angular.module('symphonia.services')
-  .factory('ProcessingService', function ($q, $http, $log, $cordovaDevice, $cordovaFileTransfer, $cordovaToast, ImageLoadService, SaveAndSendService) {
+  .factory('ProcessingService', function ($q, $log, $cordovaDevice, $cordovaFileTransfer, ImageLoadService, SaveAndSendService) {
 
     function _process(format) {
       // TODO with stable symphonia service, uncomment the following line
       //var url = 'http://46.101.224.141:8080/api/omr'; // and delete the next one
-      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.13:8080/api/omr';
+      var url = $cordovaDevice.getPlatform() === 'iOS' ? 'http://localhost:8080/api/omr' : 'http://192.168.0.10:8080/api/omr';
       var endpoint = url + '/' + format;
 
       var options = new FileUploadOptions();
       options.fileKey = 'attachment';
-      options.chunkedMode = true; // REALLY?
+      options.chunkedMode = false;
       options.fileName = ImageLoadService.getFilenameWithExtension();
       options.mimeType = ImageLoadService.getMime();
+      options.headers = {
+        Connection: "close"
+      };
 
       // TODO maybe try different framework/plugin or do something to fix this
       return $cordovaFileTransfer.upload(endpoint, ImageLoadService.getImageUri(), options)

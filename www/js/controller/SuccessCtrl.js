@@ -31,7 +31,7 @@ angular.module('symphonia.controllers')
             switch (result.buttonIndex) {
               case 2:
                 SaveAndSendService.saveFile(result.input1)
-                  .then(showToast, showErrorDialog);
+                  .then(showTappableBottom, showErrorDialog);
                 break;
               default:
                 break;
@@ -47,13 +47,9 @@ angular.module('symphonia.controllers')
         })
       }
 
-      function showToast(message) {
+      function showTappableBottom(message) {
         message += '\n\nTap here to open it!';
-        window.plugins.toast.showWithOptions({
-          message: message,
-          duration: 8000,
-          position: 'bottom'
-        }, openSavedOr)
+        window.plugins.toast.show(message, 8000, 'bottom', openSavedOr);
       }
 
       function openSavedOr(result) {
